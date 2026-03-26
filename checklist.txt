@@ -1,0 +1,9 @@
+✅•⁠ criar botão “Dados do Tutor e do Pet”, esse botão deve abrir campos para preenchimento ao ser clicado. ✅ R$ 810 (fazer direto no código)
+✅• ⁠retirar o carrossel abaixo da foto principal e acrescentar indicador na imagem para o usuário entender que pode arrastar para o lado para ver mais fotos. ✅ R$ 210
+✅•⁠ ⁠fixar a foto durante a rolagem da página ✅ R$ 320
+✅•⁠ ⁠nas páginas de categoria, os produtos devem ter um botão de CTA, porém em produtos personalizados, o clique deve levar para a página de produto. ✅ R$ 130
+✅•⁠ busca vazia deve retornar sugestão de produtos ✅ R$ 320
+✅•⁠ ⁠vitrine com conteúdo em vídeo. https://wildone.com/ ✅ R$ 1380
+✅•⁠ ⁠mais texto na descrição das categorias (para melhorar SEO) ✅ R$ 510
+✅• 13 campos personalizados R$ 150 por campo total ✅ R$ 1950
+✅• agrupar as fotos dos produtos nas vitrines e nas categorias ✅ R$ 3490

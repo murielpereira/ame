@@ -1,0 +1,139 @@
+.js-accordion-private-content {
+	display: block !important;
+}
+
+span.js-accordion-private-toggle-active {
+	display: none !important;
+}
+
+span.js-accordion-private-toggle-inactive {
+	display: none !important;
+}
+
+ul.js-nav-desktop-list.nav-desktop-list {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.head-banners.row.align-items-center.justify-content-end {
+	font-size: 13px;
+}
+
+.js-ig-success.js-swiper-instafeed.swiper-container.swiper-container-initialized.swiper-container-horizontal.swiper-container-ios {
+	height: 500px;
+}
+
+span.cp-h-flex {
+	display: none !important;
+}
+
+#container-sizechart-selly {
+	padding: .3rem !important;
+	margin-bottom: .3rem !important;
+}
+
+ul.js-nav-desktop-list.nav-desktop-list {
+	display: inline-block !important;
+}
+
+.col-md-3.p-0.pl-md-3 {
+	margin-top: 15px;
+}
+
+.text-accent, .product-installments.installment-no-interest {
+	margin-top: -10px;
+}
+
+/* Konfidency */
+
+.konfidency.summary.kfy-align-center {
+	text-align: center;
+	position: absolute !important;
+	top: 0px !important;
+	right: 6px !important;
+	z-index: 10 !important;
+	margin-bottom: 0 !important;
+	padding: 3px;
+	margin-top: 0 !important;
+	border-radius: 0 4px 0 10px !important;
+}
+
+.konfidency.summary .avg-rating {
+	display: inline-flex !important;
+	margin-left: 5px !important;
+	margin-top: 6px !important;
+	margin-right: 5px !important;
+	font-size: 13px;
+	font-weight: bold;
+}
+
+.starsV2 {
+	margin-left: 2px;
+	margin-bottom: -1px;
+}
+
+.starsV2 .star[data-v-0fe2578a] {
+	background: url("https://reviews.konfidency.com.br/ameacessoriospet/bd98b068708b3f9fb3b7.svg") no-repeat;
+	width: 19px;
+	height: 19px;
+	display: inline-block;
+}
+
+/* Konfidency */
+
+img.img-fluid.cart-item-image {
+	object-fit: contain !important;
+}
+
+.btn-whatsapp {
+	bottom: 60px;
+}
+
+h6.mb-4 {
+	display: none;
+}
+
+.payment-conditions.mt-2.pt-2 {
+	display: none;
+}
+
+.col-md-12.d-block.d-md-none {
+	margin-top: 10px;
+}
+
+.js-item-name.item-name.mb-2.font-small.opacity-80 {
+	min-height: 40px;
+	font-size: 13px !important;
+	overflow: visible;
+}
+
+.js-payment-discount-price-product-container.payment-discount-price-product-container.mt-1.font-weight-bold.font-smallest {
+	font-size: 14px !important;
+}
+
+div#logo {
+	text-align: center;
+}
+
+@media (max-width:767px) {
+	.textbanner {
+		padding: 0px 10px !important;
+	}
+	
+	.textbanner .overflow-none {
+		border-radius: 10px !important;
+	}
+}
+
+a.btn.btn-primary.btn-small.btn-smallest-md.px-4.mt-3 {
+    margin-top: 0px !important;
+	padding: 15px;
+	font-size: 13px;
+}
+
+a.btn.btn-secondary.btn-small.btn-smallest-md.px-4.mt-3 {
+    margin-top: 0px !important;
+	padding: 14px;
+	font-size: 13px;
+}

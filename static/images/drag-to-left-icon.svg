@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Sombra suave -->
+  <ellipse cx="32" cy="58" rx="20" ry="4" fill="rgba(0,0,0,0.1)"/>
+  
+  <!-- Dedo principal -->
+  <path d="M45 25c0-7.18-5.82-13-13-13s-13 5.82-13 13c0 3.5 1.38 6.68 3.64 9.04L32 45l8.36-10.96C42.62 31.68 44 28.5 44 25z" 
+        fill="#4A90E2" stroke="#357ABD" stroke-width="1.5"/>
+  
+  <!-- Unha -->
+  <ellipse cx="32" cy="22" rx="6" ry="3" fill="#F5F5F5" stroke="#E0E0E0" stroke-width="0.5"/>
+  
+  <!-- Linhas de pressão -->
+  <path d="M28 28c0 0 2 1 4 1s4-1 4-1" stroke="#357ABD" stroke-width="1" fill="none" opacity="0.6"/>
+  <path d="M26 32c0 0 3 1.5 6 1.5s6-1.5 6-1.5" stroke="#357ABD" stroke-width="1" fill="none" opacity="0.4"/>
+  
+  <!-- Seta indicativa para esquerda -->
+  <g transform="translate(20, 32)">
+    <path d="M15 0L5 8L15 16" stroke="#FF6B6B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M5 8H25" stroke="#FF6B6B" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Efeito de brilho -->
+  <ellipse cx="28" cy="18" rx="3" ry="1.5" fill="rgba(255,255,255,0.6)"/>
+</svg> 

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemplo - Ícone Drag to Left</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .drag-to-left-icon {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            width: 64px;
+            height: 64px;
+            animation: drag-to-left 2s ease-in-out infinite;
+            cursor: pointer;
+        }
+        
+        .drag-to-left-icon svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        
+        @keyframes drag-to-left {
+            0% {
+                transform: translateX(-50%) scale(1);
+                opacity: 0.8;
+            }
+            25% {
+                transform: translateX(-50%) scale(0.95);
+                opacity: 1;
+            }
+            50% {
+                transform: translateX(-60%) scale(0.9);
+                opacity: 1;
+            }
+            75% {
+                transform: translateX(-70%) scale(0.95);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateX(-80%) scale(1);
+                opacity: 0.6;
+            }
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .content {
+            min-height: 200px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Arraste para a Esquerda</h1>
+        <p>Use o ícone abaixo para indicar que o conteúdo pode ser arrastado para a esquerda</p>
+        
+        <div class="content">
+            <p>Conteúdo da página aqui...</p>
+            <p>O ícone aparecerá na parte inferior indicando a direção do movimento.</p>
+        </div>
+        
+        <!-- Ícone com animação -->
+        <div class="drag-to-left-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+                <!-- Sombra -->
+                <ellipse cx="32" cy="58" rx="18" ry="3" fill="rgba(0,0,0,0.15)"/>
+                
+                <!-- Dedo estilizado -->
+                <path d="M40 20c0-4.42-3.58-8-8-8s-8 3.58-8 8c0 2.21 0.89 4.21 2.34 5.66L32 40l5.66-14.34C39.11 24.21 40 22.21 40 20z" 
+                      fill="#6C63FF" stroke="#5A52E0" stroke-width="1"/>
+                
+                <!-- Unha -->
+                <ellipse cx="32" cy="18" rx="4" ry="2" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="0.5"/>
+                
+                <!-- Seta para esquerda -->
+                <g transform="translate(15, 28)">
+                    <path d="M20 4L12 12L20 20" stroke="#FF6B6B" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 12H28" stroke="#FF6B6B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                </g>
+                
+                <!-- Efeito de pressão -->
+                <circle cx="32" cy="26" r="2" fill="rgba(255,255,255,0.3)"/>
+            </svg>
+        </div>
+    </div>
+</body>
+</html> 
