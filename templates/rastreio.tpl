@@ -417,7 +417,12 @@
 
             } catch (erro) {
                 console.error(erro);
-                divResultado.innerHTML = `<p style="color:red; text-align:center">Erro: ${erro.message}</p>`;
+                divResultado.innerHTML = '';
+                const erroP = document.createElement('p');
+                erroP.style.color = 'red';
+                erroP.style.textAlign = 'center';
+                erroP.textContent = `Erro: ${erro.message}`;
+                divResultado.appendChild(erroP);
             }
         }
     </script>
