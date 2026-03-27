@@ -1,9 +1,9 @@
 {% set has_filters_available = products and has_filters_enabled and product_filters is not empty %}
 {% if settings.pagination == 'infinite' %}
 	{% if settings.grid_columns_desktop == '5' %}
-		{% paginate by 15 %}
+		{% paginate by 30 %}
 	{% else %}
-		{% paginate by 12 %}
+		{% paginate by 24 %}
 	{% endif %}
 {% else %}
 	{% if settings.grid_columns_desktop == '5' %}
