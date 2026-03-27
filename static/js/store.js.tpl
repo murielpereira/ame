@@ -2756,7 +2756,6 @@ DOMContentLoaded.addEventOrExecute(() => {
             var width = window.innerWidth;
 
             var productSwiper = null;
-            console.log(`Mudou js - criou`);
             
             createSwiper(
                 '.js-swiper-product', {
