@@ -510,9 +510,9 @@ DOMContentLoaded.addEventOrExecute(() => {
 
     // Attach observer to every [data-transition] element:
     const ELs_inViewport = document.querySelectorAll('[data-transition]');
+    const Obs = new IntersectionObserver(inViewport);
     ELs_inViewport.forEach(EL => {
       EL.observed = false; // Initialize the observed flag for each element
-      const Obs = new IntersectionObserver(inViewport);
       Obs.observe(EL);
     });
 
