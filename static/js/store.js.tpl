@@ -938,21 +938,9 @@ DOMContentLoaded.addEventOrExecute(() => {
 
 	{% if template == 'home' %}
 
-            // aqui vamos fazer esquema de lazy, quand o elemento estiver chegando a ficar visivel na tela então damos display block e trocamos data-src para src.
+            // aqui vamos fazer esquema de lazy usando IntersectionObserver para melhor performance
             
             setTimeout(function() {
-                // Função auxiliar para verificar se o elemento está visível na viewport (com margem de 200px)
-                function isElementInViewport(el) {
-                    const rect = el.getBoundingClientRect();
-                    const margin = 200; // Margem para carregar antes de ficar visível
-                    return (
-                        rect.top <= (window.innerHeight + margin) &&
-                        rect.bottom >= -margin &&
-                        rect.left <= (window.innerWidth + margin) &&
-                        rect.right >= -margin
-                    );
-                }
-
                 // Função para carregar imagens primeiro
                 function loadImages(element) {
                     const imgs = element.querySelectorAll("img");
@@ -987,10 +975,18 @@ DOMContentLoaded.addEventOrExecute(() => {
                     });
                 }
 
-                // Função para carregar elementos lazy quando ficarem visíveis
-                function loadLazyElements() {
-                    document.querySelectorAll(".js-section-video-products-lazy:not(.js-section-video-products-lazy-loaded)").forEach(function(element) {    
-                        if (isElementInViewport(element)) {
+                // Configurar o IntersectionObserver
+                const observerOptions = {
+                    root: null, // viewport
+                    rootMargin: '200px', // Carregar antes de ficar visível, equivalente ao margin anterior
+                    threshold: 0
+                };
+
+                const lazyElementObserver = new IntersectionObserver(function(entries, observer) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            const element = entry.target;
+
                             element.style.display = "block";
                             
                             // Carrega imagens primeiro
@@ -1002,26 +998,16 @@ DOMContentLoaded.addEventOrExecute(() => {
                             }, 300);
                             
                             element.classList.add("js-section-video-products-lazy-loaded");
+
+                            // Parar de observar o elemento depois de carregado
+                            observer.unobserve(element);
                         }
                     });
-                }
+                }, observerOptions);
 
-                // Executar na primeira vez
-                loadLazyElements();
-
-                // Adicionar listener de scroll com throttling para performance
-                let scrollTimeout;
-                window.addEventListener('scroll', function() {
-                    if (scrollTimeout) return;
-                    scrollTimeout = setTimeout(function() {
-                        loadLazyElements();
-                        scrollTimeout = null;
-                    }, 50); // Throttle reduzido para 50ms
-                });
-
-                // Também executar quando a janela for redimensionada
-                window.addEventListener('resize', function() {
-                    loadLazyElements();
+                // Observar todos os elementos lazy
+                document.querySelectorAll(".js-section-video-products-lazy:not(.js-section-video-products-lazy-loaded)").forEach(function(element) {
+                    lazyElementObserver.observe(element);
                 });
             }, 100); // Reduzido de 1000ms para 100ms
 
