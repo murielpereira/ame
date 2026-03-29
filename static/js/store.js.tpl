@@ -938,21 +938,9 @@ DOMContentLoaded.addEventOrExecute(() => {
 
 	{% if template == 'home' %}
 
-            // aqui vamos fazer esquema de lazy, quand o elemento estiver chegando a ficar visivel na tela então damos display block e trocamos data-src para src.
+            // aqui vamos fazer esquema de lazy, usando IntersectionObserver para melhor performance
             
             setTimeout(function() {
-                // Função auxiliar para verificar se o elemento está visível na viewport (com margem de 200px)
-                function isElementInViewport(el) {
-                    const rect = el.getBoundingClientRect();
-                    const margin = 200; // Margem para carregar antes de ficar visível
-                    return (
-                        rect.top <= (window.innerHeight + margin) &&
-                        rect.bottom >= -margin &&
-                        rect.left <= (window.innerWidth + margin) &&
-                        rect.right >= -margin
-                    );
-                }
-
                 // Função para carregar imagens primeiro
                 function loadImages(element) {
                     const imgs = element.querySelectorAll("img");
@@ -987,42 +975,42 @@ DOMContentLoaded.addEventOrExecute(() => {
                     });
                 }
 
-                // Função para carregar elementos lazy quando ficarem visíveis
-                function loadLazyElements() {
+                // IntersectionObserver para detectar quando elementos ficam visíveis
+                if ('IntersectionObserver' in window) {
+                    const lazyObserver = new IntersectionObserver(function(entries, observer) {
+                        entries.forEach(function(entry) {
+                            if (entry.isIntersecting) {
+                                const element = entry.target;
+                                element.style.display = "block";
+
+                                // Carrega imagens primeiro
+                                loadImages(element);
+
+                                // Carrega vídeos depois de um pequeno delay
+                                setTimeout(() => {
+                                    loadVideos(element);
+                                }, 300);
+
+                                element.classList.add("js-section-video-products-lazy-loaded");
+                                observer.unobserve(element);
+                            }
+                        });
+                    }, {
+                        rootMargin: "200px" // Margem para carregar antes de ficar visível
+                    });
+
+                    document.querySelectorAll(".js-section-video-products-lazy:not(.js-section-video-products-lazy-loaded)").forEach(function(element) {
+                        lazyObserver.observe(element);
+                    });
+                } else {
+                    // Fallback para navegadores antigos que não suportam IntersectionObserver
                     document.querySelectorAll(".js-section-video-products-lazy:not(.js-section-video-products-lazy-loaded)").forEach(function(element) {    
-                        if (isElementInViewport(element)) {
-                            element.style.display = "block";
-                            
-                            // Carrega imagens primeiro
-                            loadImages(element);
-                            
-                            // Carrega vídeos depois de um pequeno delay
-                            setTimeout(() => {
-                                loadVideos(element);
-                            }, 300);
-                            
-                            element.classList.add("js-section-video-products-lazy-loaded");
-                        }
+                        element.style.display = "block";
+                        loadImages(element);
+                        setTimeout(() => { loadVideos(element); }, 300);
+                        element.classList.add("js-section-video-products-lazy-loaded");
                     });
                 }
-
-                // Executar na primeira vez
-                loadLazyElements();
-
-                // Adicionar listener de scroll com throttling para performance
-                let scrollTimeout;
-                window.addEventListener('scroll', function() {
-                    if (scrollTimeout) return;
-                    scrollTimeout = setTimeout(function() {
-                        loadLazyElements();
-                        scrollTimeout = null;
-                    }, 50); // Throttle reduzido para 50ms
-                });
-
-                // Também executar quando a janela for redimensionada
-                window.addEventListener('resize', function() {
-                    loadLazyElements();
-                });
             }, 100); // Reduzido de 1000ms para 100ms
 
 		{# /* // Home slider */ #}
