@@ -52,7 +52,7 @@
 											</a>
 										</div>
 										<div class="col-auto">
-											<a class="js-toggle-menu-close js-modal-close modal-close">
+											<a href="#" class="js-toggle-menu-close js-modal-close modal-close" aria-label="Fechar">
 												<svg class="icon-inline  modal-close-icon"><use xlink:href="#times"/></svg>
 											</a>
 										</div>

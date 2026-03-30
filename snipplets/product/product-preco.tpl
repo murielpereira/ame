@@ -128,7 +128,7 @@
         {# Link "Ver mais detalhes" - AGORA SÓ APARECE SE TIVER MAIS DE 1 PARCELA #}
         {% if not home_main_product and (show_payments_info or hasDiscount) and has_multiple_installments %}
             <a id="btn-installments" 
-            href="javascript:void(0)" 
+            href="#installments-modal"
             class="js-modal-open js-fullscreen-modal-open font-small d-block mt-1" 
             data-toggle="#installments-modal" 
             data-modal-url="modal-fullscreen-payments"
