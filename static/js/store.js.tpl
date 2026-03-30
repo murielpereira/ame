@@ -2280,10 +2280,11 @@ DOMContentLoaded.addEventOrExecute(() => {
         {# Shows/hides price with discount and strikethrough original price for every payment method #}
 
         function togglePaymentDiscounts(variant){
-            jQueryNuvem(".js-payment-method-total").each(function( paymentMethodTotalElement ){
-                const priceComparerElement = jQueryNuvem(paymentMethodTotalElement).find(".js-compare-price-display");
-                const installmentsOnePaymentElement = jQueryNuvem(paymentMethodTotalElement).find('.js-installments-no-discount');
-                const priceWithDiscountElement = jQueryNuvem(paymentMethodTotalElement).find('.js-price-with-discount');
+            jQueryNuvem(".js-payment-method-total").each(function(){
+                const $this = jQueryNuvem(this);
+                const priceComparerElement = $this.find(".js-compare-price-display");
+                const installmentsOnePaymentElement = $this.find('.js-installments-no-discount');
+                const priceWithDiscountElement = $this.find('.js-price-with-discount');
 
                 priceComparerElement.hide();
                 installmentsOnePaymentElement.hide();
