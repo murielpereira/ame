@@ -1,0 +1,26 @@
+# Nome do processo de automação
+name: Automate Jules Merge
+
+# Quando é que este código deve ser executado?
+on:
+  pull_request:
+    types:
+      - opened      # Quando o Jules cria a PR
+      - synchronize # Quando o Jules atualiza a PR
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+    steps:
+      # Passo 1: O GitHub "pega" no código do teu repositório
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Passo 2: Faz o merge automático da Pull Request
+      - name: Auto-merge PR
+        uses: "pascalgn/automerge-action@v0.15.6"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          MERGE_METHOD: "merge" # Une as branches mantendo o histórico
+          MERGE_LABELS: ""      # Aplica a todas as PRs (ou podes filtrar por labels)
+          MERGE_RETRIES: "3"    # Tenta 3 vezes caso o GitHub esteja lento
