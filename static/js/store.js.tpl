@@ -1971,12 +1971,18 @@ DOMContentLoaded.addEventOrExecute(() => {
         {# /* // Filters */ #}
 
         {% if has_applied_filters %}
-            jQueryNuvem('.js-filter-container').each(function(el) {
-                const filterActive = jQueryNuvem(el).find(".js-filter-checkbox [type=checkbox]:checked");
-                filterActive.closest(".js-filter-container").find(".js-filters-badge").text(filterActive.length).show();
+            document.querySelectorAll('.js-filter-container').forEach(function(el) {
+                const activeCount = el.querySelectorAll('.js-filter-checkbox [type=checkbox]:checked').length;
+                const badge = el.querySelector('.js-filters-badge');
+                if (badge && activeCount > 0) {
+                    badge.textContent = activeCount;
+                    badge.style.display = '';
+                }
             });
-            const applied_filters = jQueryNuvem("#nav-filters .js-remove-filter-chip").length;
-            jQueryNuvem(".js-filters-total-badge").text(applied_filters);
+            const appliedFilters = document.querySelectorAll('#nav-filters .js-remove-filter-chip').length;
+            document.querySelectorAll('.js-filters-total-badge').forEach(function(badge) {
+                badge.textContent = appliedFilters;
+            });
         {% endif %}
 
 		{# /* // Sort by */ #}
