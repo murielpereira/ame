@@ -281,8 +281,11 @@ DOMContentLoaded.addEventOrExecute(() => {
 
         cleanURLHash = function(){
             const uri = window.location.toString();
-            const clean_uri = uri.substring(0, uri.indexOf("#"));
-            window.history.replaceState({}, document.title, clean_uri);
+            const hashIndex = uri.indexOf("#");
+            if (hashIndex !== -1) {
+                const clean_uri = uri.substring(0, hashIndex);
+                window.history.replaceState({}, document.title, clean_uri);
+            }
         };
 
         {# Go back 1 step on browser history #}
