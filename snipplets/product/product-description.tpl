@@ -8,6 +8,25 @@
         <div class="user-content font-small mb-4">
             {{ product.description }}
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var userContent = document.querySelector('.user-content');
+                if (userContent) {
+                    var iframes = userContent.querySelectorAll('iframe');
+                    for (var i = 0; i < iframes.length; i++) {
+                        if (!iframes[i].hasAttribute('title')) {
+                            iframes[i].setAttribute('title', 'Vídeo descritivo');
+                        }
+                    }
+                    var images = userContent.querySelectorAll('img');
+                    for (var j = 0; j < images.length; j++) {
+                        if (!images[j].hasAttribute('alt')) {
+                            images[j].setAttribute('alt', 'Imagem descritiva');
+                        }
+                    }
+                }
+            });
+        </script>
     {% endif %}
 
     {% if settings.show_product_fb_comment_box %}

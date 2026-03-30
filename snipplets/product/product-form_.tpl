@@ -90,7 +90,7 @@
             </div>
             
         {% if not home_main_product and (show_payments_info or hasDiscount) %}
-                <a id="btn-installments" class="font-small" href="#" {% if not (product.get_max_installments and product.get_max_installments(false)) %}style="display: none;"{% endif %}>
+                <a id="btn-installments" class="font-small" href="#installments-modal" {% if not (product.get_max_installments and product.get_max_installments(false)) %}style="display: none;"{% endif %}>
                     <svg class="icon-inline icon-lg svg-icon-text"><use xlink:href="#credit-card"/></svg>
                     {% if not hasDiscount and not settings.product_detail_installments %}
                         {{ "Ver medios de pago" | translate }}

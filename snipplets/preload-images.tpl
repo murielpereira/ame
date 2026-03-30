@@ -52,7 +52,7 @@
     {% if "video_image.jpg" | has_custom_image %}
         {% set video_image_src = 'video_image.jpg' | static_url | settings_image_url("original") %}
     {% else %}
-        <link rel="preconnect" href="https://img.youtube.com/" />
+        <link rel="dns-prefetch" href="https://img.youtube.com/" />
         {% set video_url = settings.video_embed %}
         {% if '/watch?v=' in settings.video_embed %}
             {% set video_format = '/watch?v=' %}

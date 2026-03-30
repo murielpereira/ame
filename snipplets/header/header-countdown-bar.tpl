@@ -68,7 +68,6 @@ if (countdownEnabled === '1' && fullContainerEl) {
     
     if (isNaN(finalDate) || finalDate <= now) {
         // Data inválida OU data expirada, o contador fica oculto.
-        console.error("Contador inválido ou expirado. Data lida:", countdownDateString);
     } else {
         // Se ativo e válido, inicia o contador
         
