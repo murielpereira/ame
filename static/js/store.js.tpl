@@ -938,7 +938,7 @@ DOMContentLoaded.addEventOrExecute(() => {
 
 	{% if template == 'home' %}
 
-            // aqui vamos fazer esquema de lazy usando IntersectionObserver
+            // aqui vamos fazer esquema de lazy, usando IntersectionObserver para melhor performance
             
             setTimeout(function() {
                 // Função para carregar imagens primeiro
@@ -975,46 +975,42 @@ DOMContentLoaded.addEventOrExecute(() => {
                     });
                 }
 
-                // Intersection Observer para carregar elementos lazy
-                if ('IntersectionObserver' in window) {
-                    const observerOptions = {
-                        root: null,
-                        rootMargin: '200px', // Margem para carregar antes de ficar visível
-                        threshold: 0
-                    };
-
-                    const lazyObserver = new IntersectionObserver(function(entries, observer) {
-                        entries.forEach(function(entry) {
-                            if (entry.isIntersecting) {
-                                const element = entry.target;
-                                element.style.display = "block";
-
-                                // Carrega imagens primeiro
-                                loadImages(element);
-
-                                // Carrega vídeos depois de um pequeno delay
-                                setTimeout(() => {
-                                    loadVideos(element);
-                                }, 300);
-
-                                element.classList.add("js-section-video-products-lazy-loaded");
-                                observer.unobserve(element); // Remove observer once loaded
-                            }
-                        });
-                    }, observerOptions);
-
+                // Função para carregar elementos lazy quando ficarem visíveis
+                function loadLazyElements() {
                     document.querySelectorAll(".js-section-video-products-lazy:not(.js-section-video-products-lazy-loaded)").forEach(function(element) {    
-                        lazyObserver.observe(element);
-                    });
-                } else {
-                    // Fallback para navegadores antigos sem suporte a IntersectionObserver
-                    document.querySelectorAll(".js-section-video-products-lazy:not(.js-section-video-products-lazy-loaded)").forEach(function(element) {
-                        element.style.display = "block";
-                        loadImages(element);
-                        setTimeout(() => { loadVideos(element); }, 300);
-                        element.classList.add("js-section-video-products-lazy-loaded");
+                        if (isElementInViewport(element)) {
+                            element.style.display = "block";
+                            
+                            // Carrega imagens primeiro
+                            loadImages(element);
+                            
+                            // Carrega vídeos depois de um pequeno delay
+                            setTimeout(() => {
+                                loadVideos(element);
+                            }, 300);
+                            
+                            element.classList.add("js-section-video-products-lazy-loaded");
+                        }
                     });
                 }
+
+                // Executar na primeira vez
+                loadLazyElements();
+
+                // Adicionar listener de scroll com throttling para performance
+                let scrollTimeout;
+                window.addEventListener('scroll', function() {
+                    if (scrollTimeout) return;
+                    scrollTimeout = setTimeout(function() {
+                        loadLazyElements();
+                        scrollTimeout = null;
+                    }, 50); // Throttle reduzido para 50ms
+                });
+
+                // Também executar quando a janela for redimensionada
+                window.addEventListener('resize', function() {
+                    loadLazyElements();
+                });
             }, 100); // Reduzido de 1000ms para 100ms
 
 		{# /* // Home slider */ #}
