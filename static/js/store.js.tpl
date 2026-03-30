@@ -2353,20 +2353,24 @@ DOMContentLoaded.addEventOrExecute(() => {
             jQueryNuvem(".js-info-payment-method-container").each(function(infoPaymentMethodElement){
                 {# For each payment method this will show the payment method discount and discount explanation #}
 
-                const infoPaymentMethod = jQueryNuvem(infoPaymentMethodElement)
-                infoPaymentMethod.find(".js-discount-explanation").hide();
-                infoPaymentMethod.find(".js-discount-disclaimer").hide();
+                const infoPaymentMethod = jQueryNuvem(infoPaymentMethodElement);
+                const discountExplanation = infoPaymentMethod.find(".js-discount-explanation");
+                const discountDisclaimer = infoPaymentMethod.find(".js-discount-disclaimer");
+                const paymentMethodDiscount = infoPaymentMethod.find(".js-payment-method-discount");
+
+                discountExplanation.hide();
+                discountDisclaimer.hide();
 
                 const priceWithDiscountElement = infoPaymentMethod.find('.js-price-with-discount');
                 const discount = priceWithDiscountElement.data('paymentDiscount');
 
                 if (discount > 0 && showMaxPaymentDiscount(variant)){
-                    infoPaymentMethod.find(".js-discount-explanation").show();
-                    infoPaymentMethod.find(".js-payment-method-discount").show();
+                    discountExplanation.show();
+                    paymentMethodDiscount.show();
                 }
 
                 if (discount > 0 && showMaxPaymentDiscountNotCombinableDisclaimer(variant)){
-                    infoPaymentMethod.find(".js-discount-disclaimer").show();
+                    discountDisclaimer.show();
                 }
             })
         }
