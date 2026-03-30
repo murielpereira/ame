@@ -796,50 +796,114 @@ DOMContentLoaded.addEventOrExecute(() => {
         {% set adbarWithoutMessages = settings.ad_bar and not adbarMessages and adbarImagesOnly %}
 
         var topbarHeight = jQueryNuvem(".js-topbar").outerHeight();
+        var header = jQueryNuvem(".js-head-main");
 
-        window.addEventListener("scroll", function() {
+        if ('IntersectionObserver' in window) {
+            var sentinel = document.createElement('div');
+            sentinel.style.position = 'absolute';
+            sentinel.style.top = '0';
+            sentinel.style.left = '0';
+            sentinel.style.width = '1px';
+            sentinel.style.visibility = 'hidden';
+            sentinel.style.pointerEvents = 'none';
+            // Set height to initial navbarHeight
+            var initialNavbarHeight = header.outerHeight() || 100;
+            sentinel.style.height = initialNavbarHeight + 'px';
+            document.body.appendChild(sentinel);
 
-            var scrolledPosition = window.pageYOffset;
+            var headerObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    {# Recalculate topbar height in case image has not loaded yet and result is 0 #}
+                    {% if adbarWithoutMessages %}
+                        {% if adbarImageMobileOnly %}
+                            if (window.innerWidth < 768) {
+                        {% elseif adbarImageDesktopOnly %}
+                            if (window.innerWidth > 768) {
+                        {% endif %}
+                                if (topbarHeight == 0) {
+                                    topbarHeight = jQueryNuvem(".js-topbar").outerHeight();
+                                }
+                        {% if adbarImageMobileOnly or adbarImageDesktopOnly %}
+                            }
+                        {% endif %}
+                    {% endif %}
 
-            var header = jQueryNuvem(".js-head-main");
-            var navbarHeight = header.outerHeight();
-
-            {# Recalculate topbar height in case image has not loaded yet and result is 0 #}
-
-            {% if adbarWithoutMessages %}
-                {% if adbarImageMobileOnly %}
-                    if (window.innerWidth < 768) {
-                {% elseif adbarImageDesktopOnly %}
-                    if (window.innerWidth > 768) {
-                {% endif %}
-                        if (topbarHeight == 0) {
-                            topbarHeight = jQueryNuvem(".js-topbar").outerHeight();
-                        }
-                {% if adbarImageMobileOnly or adbarImageDesktopOnly %}
+                    if (!entry.isIntersecting) {
+                        header.addClass('compress').css('top', -topbarHeight + 'px' );
+                        {% if template == 'category' %}
+                            if (window.innerWidth < 768) {
+                                setTimeout(function(){
+                                    if(typeof offsetCategories === 'function') offsetCategories();
+                                },300);
+                            }
+                        {% endif %}
+                    } else {
+                        header.removeClass('compress').css("top", "0px");
+                        {% if template == 'category' %}
+                            if (window.innerWidth < 768) {
+                                setTimeout(function(){
+                                    if(typeof offsetCategories === 'function') offsetCategories();
+                                },300);
+                            }
+                        {% endif %}
                     }
-                {% endif %}
-            {% endif %}
+                });
+            }, { threshold: 0 });
 
-            if (scrolledPosition > navbarHeight) {
-                header.addClass('compress').css('top', -topbarHeight + 'px' );
-                {% if template == 'category' %}
-                    if (window.innerWidth < 768) {
-                        setTimeout(function(){
-                            offsetCategories();
-                        },300);
+            headerObserver.observe(sentinel);
+
+            // Re-evaluate on resize
+            window.addEventListener('resize', function() {
+                sentinel.style.height = header.outerHeight() + 'px';
+            });
+        } else {
+            // Fallback for older browsers
+            var scrollTimeout;
+            window.addEventListener("scroll", function() {
+                if (scrollTimeout) {
+                    window.cancelAnimationFrame(scrollTimeout);
+                }
+                scrollTimeout = window.requestAnimationFrame(function() {
+                    var scrolledPosition = window.pageYOffset;
+                    var navbarHeight = header.outerHeight();
+
+                    {# Recalculate topbar height in case image has not loaded yet and result is 0 #}
+                    {% if adbarWithoutMessages %}
+                        {% if adbarImageMobileOnly %}
+                            if (window.innerWidth < 768) {
+                        {% elseif adbarImageDesktopOnly %}
+                            if (window.innerWidth > 768) {
+                        {% endif %}
+                                if (topbarHeight == 0) {
+                                    topbarHeight = jQueryNuvem(".js-topbar").outerHeight();
+                                }
+                        {% if adbarImageMobileOnly or adbarImageDesktopOnly %}
+                            }
+                        {% endif %}
+                    {% endif %}
+
+                    if (scrolledPosition > navbarHeight) {
+                        header.addClass('compress').css('top', -topbarHeight + 'px' );
+                        {% if template == 'category' %}
+                            if (window.innerWidth < 768) {
+                                setTimeout(function(){
+                                    if(typeof offsetCategories === 'function') offsetCategories();
+                                },300);
+                            }
+                        {% endif %}
+                    } else {
+                        header.removeClass('compress').css("top", "0px");
+                        {% if template == 'category' %}
+                            if (window.innerWidth < 768) {
+                                setTimeout(function(){
+                                    if(typeof offsetCategories === 'function') offsetCategories();
+                                },300);
+                            }
+                        {% endif %}
                     }
-                {% endif %}
-            } else {
-                header.removeClass('compress').css("top", "0px");
-                {% if template == 'category' %}
-                    if (window.innerWidth < 768) {
-                        setTimeout(function(){
-                            offsetCategories();
-                        },300);
-                    }
-                {% endif %}
-            }
-        });
+                });
+            });
+        }
         
     {% if has_only_mobile_with_fixed_nav %}
         }
@@ -1951,22 +2015,31 @@ DOMContentLoaded.addEventOrExecute(() => {
                 });
                 observer.observe(document.querySelector(".js-category-controls-prev"));
 
+                var $sticky_category_controls = jQueryNuvem(".js-category-controls");
+                var $head_main = jQueryNuvem(".js-head-main");
+                var categoriesOffset = 0;
+                var isCategoriesOffsetTicking = false;
+
                 offsetCategories = function() {
-                    var $sticky_category_controls = jQueryNuvem(".js-category-controls");
+                    categoriesOffset = $head_main.outerHeight();
 
-                    var categoriesOffset = jQueryNuvem(".js-head-main").outerHeight();
-
-                    if(jQueryNuvem(".js-head-main").hasClass("compress")){
-                        var categoriesOffset = categoriesOffset - topbarHeight - 1;
+                    if($head_main.hasClass("compress")){
+                        categoriesOffset = categoriesOffset - topbarHeight - 1;
                     }
 
-                    $sticky_category_controls.css('top', (categoriesOffset).toString() + 'px' );
+                    $sticky_category_controls.css('top', categoriesOffset.toString() + 'px' );
                 };
 
                 offsetCategories();
 
                 document.addEventListener("scroll", function(){
-                    offsetCategories();
+                    if (!isCategoriesOffsetTicking) {
+                        window.requestAnimationFrame(function() {
+                            offsetCategories();
+                            isCategoriesOffsetTicking = false;
+                        });
+                        isCategoriesOffsetTicking = true;
+                    }
                 });
 
             }
