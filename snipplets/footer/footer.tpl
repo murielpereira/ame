@@ -179,7 +179,7 @@
 										{% if settings.seal_url != '' %}
 											<a href="{{ settings.seal_url | setting_url }}" target="_blank" rel="noopener noreferrer">
 										{% endif %}
-											<img src="{{ 'images/empty-placeholder.png' | static_url }}" data-src="{{ "seal_img.jpg" | static_url }}" class="custom-seal-img lazyload" alt="{{ 'Sello de' | translate }} {{ store.name }}" width="140" height="40"/>
+											<img src="{{ 'images/empty-placeholder.png' | static_url }}" data-src="{{ "seal_img.jpg" | static_url }}" class="custom-seal-img lazyload" alt="{{ 'Sello de' | translate }} {{ store.name }}" width="40" height="40"/>
 										{% if settings.seal_url != '' %}
 											</a>
 										{% endif %}
