@@ -120,7 +120,7 @@
                 <h3 class="mb-3 text-right">{{ 'Total' | translate }}: {{ order.total | money }}</h3>
                 {% if order.pending %}
                     <div class="text-right">
-                        <a class="btn btn-primary btn-big d-inline-block col col-md-4" href="{{ order.checkout_url | add_param('ref', 'orders_details') }}" target="_blank">{{ 'Realizar el pago' | translate }}</a>
+                        <a class="btn btn-primary btn-big d-inline-block col col-md-4" href="{{ order.checkout_url | add_param('ref', 'orders_details') }}" target="_blank" rel="noopener noreferrer">{{ 'Realizar el pago' | translate }}</a>
                     </div>
                 {% endif %}
             </div>
