@@ -16,12 +16,12 @@
     input_aria_label: 'Cambiar cantidad' | translate } %}
         {% block input_prepend_content %}
         <div class="form-row m-0 align-items-center" data-component="product.quantity">
-            <span class="js-quantity-down form-quantity-icon btn icon-30px ml-1" data-component="product.quantity.minus">
+            <span class="js-quantity-down form-quantity-icon btn icon-30px ml-1" data-component="product.quantity.minus" aria-label="{{ 'Disminuir cantidad' | translate }}" role="button" tabindex="0">
                 <svg class="icon-inline"><use xlink:href="#minus"/></svg>
             </span>
         {% endblock input_prepend_content %}
         {% block input_append_content %}
-            <span class="js-quantity-up form-quantity-icon btn icon-30px mr-1" data-component="product.quantity.plus">
+            <span class="js-quantity-up form-quantity-icon btn icon-30px mr-1" data-component="product.quantity.plus" aria-label="{{ 'Aumentar cantidad' | translate }}" role="button" tabindex="0">
                 <svg class="icon-inline"><use xlink:href="#plus"/></svg>
             </span>
         </div>
