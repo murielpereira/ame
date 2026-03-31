@@ -167,13 +167,20 @@ DOMContentLoaded.addEventOrExecute(() => {
             $addedToCartNotification.css("top", fixedNotificationPosition.toString() + 'px').css("marginTop", "-1px");
 
             !function () {
+                var isAtTop = true;
+                // ⚡ Bolt: Added state-tracking and { passive: true } to optimize scroll event
+                // This prevents continuous jQuery DOM manipulations on every single scroll frame
                 window.addEventListener("scroll", function (e) {
-                    if (window.pageYOffset == 0) {
-                        $addedToCartNotification.css("top" , fixedNotificationPosition.toString() + 'px');
-                    } else {
-                        $addedToCartNotification.css("top" , "30px");
+                    var currentAtTop = window.pageYOffset == 0;
+                    if (isAtTop !== currentAtTop) {
+                        isAtTop = currentAtTop;
+                        if (isAtTop) {
+                            $addedToCartNotification.css("top" , fixedNotificationPosition.toString() + 'px');
+                        } else {
+                            $addedToCartNotification.css("top" , "30px");
+                        }
                     }
-                });
+                }, { passive: true });
             }();
         }
 
