@@ -2,22 +2,22 @@
 
 {% set icon_size_class = modal ? 'h2' : 'font-big' %}
 
-<a class="social-share-button d-inline-block d-md-none" data-network="whatsapp" target="_blank" href="whatsapp://send?text={{ product.social_url }}" title="{{ 'Compartir en WhatsApp' | translate }}" aria-label="{{ 'Compartir en WhatsApp' | translate }}">
+<a class="social-share-button d-inline-block d-md-none" data-network="whatsapp" target="_blank" rel="noopener noreferrer" href="whatsapp://send?text={{ product.social_url }}" title="{{ 'Compartir en WhatsApp' | translate }}" aria-label="{{ 'Compartir en WhatsApp' | translate }}">
 	<svg class="icon-inline {{ icon_size_class }} svg-icon-text"><use xlink:href="#whatsapp"/></svg>
 </a>
 
 {# Facebook button #}
-<a class="social-share-button" data-network="facebook" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{ product.social_url }}" title="{{ 'Compartir en Facebook' | translate }}" aria-label="{{ 'Compartir en Facebook' | translate }}">
+<a class="social-share-button" data-network="facebook" target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/sharer/sharer.php?u={{ product.social_url }}" title="{{ 'Compartir en Facebook' | translate }}" aria-label="{{ 'Compartir en Facebook' | translate }}">
 	<svg class="icon-inline {{ icon_size_class }} svg-icon-text"><use xlink:href="#facebook-f"/></svg>
 </a>
 
 {# Twitter button #}
-<a class="social-share-button" data-network="twitter" target="_blank" href="https://twitter.com/share?url={{ product.social_url }}" title="{{ 'Compartir en Twitter' | translate }}" aria-label="{{ 'Compartir en Twitter' | translate }}">
+<a class="social-share-button" data-network="twitter" target="_blank" rel="noopener noreferrer" href="https://twitter.com/share?url={{ product.social_url }}" title="{{ 'Compartir en Twitter' | translate }}" aria-label="{{ 'Compartir en Twitter' | translate }}">
 	<svg class="icon-inline {{ icon_size_class }} svg-icon-text"><use xlink:href="#twitter"/></svg>
 </a>
 
 {# Pinterest button #}
-<a class="js-pinterest-share social-share-button" data-network="pinterest" target="_blank" href="#" title="{{ 'Compartir en Pinterest' | translate }}" aria-label="{{ 'Compartir en Pinterest' | translate }}">
+<a class="js-pinterest-share social-share-button" data-network="pinterest" target="_blank" rel="noopener noreferrer" href="#" title="{{ 'Compartir en Pinterest' | translate }}" aria-label="{{ 'Compartir en Pinterest' | translate }}">
 	<svg class="icon-inline {{ icon_size_class }} svg-icon-text"><use xlink:href="#pinterest"/></svg>
 </a>
 

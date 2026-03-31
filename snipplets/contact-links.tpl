@@ -40,7 +40,7 @@
 		{% endif %}
 		{% if store.blog %}
 			<li class="{% if footer %}footer-menu-item{% else %}mb-3{% endif %}">
-				<a target="_blank" href="{{ store.blog }}" class="{% if btn_link %}btn{% else %}contact{% endif %}-link">
+				<a target="_blank" rel="noopener noreferrer" href="{{ store.blog }}" class="{% if btn_link %}btn{% else %}contact{% endif %}-link">
 					{% if with_icons %}
 						<svg class="icon-inline icon-lg icon-w mr-2"><use xlink:href="#comments"/></svg>
 					{% endif %}

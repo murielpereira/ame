@@ -403,12 +403,12 @@
                             </div>
                         </div>
 
-                        <a href="https://wa.me/5548991574943" target="_blank" class="card card-ajuda">
+                        <a href="https://wa.me/5548991574943" target="_blank" rel="noopener noreferrer" class="card card-ajuda">
                             ${icons.help}
                             <span style="color: #ff7b00; font-weight: bold;">Precisa de ajuda? Fale conosco</span>
                         </a>
 
-                        <a href="https://portal.smartenvios.com/rastreamento/codigo-de-rastreio/${r.tracking_code}" target="_blank" class="link-discreto">
+                        <a href="https://portal.smartenvios.com/rastreamento/codigo-de-rastreio/${r.tracking_code}" target="_blank" rel="noopener noreferrer" class="link-discreto">
                             + Ver detalhes completos no site oficial
                         </a>
 

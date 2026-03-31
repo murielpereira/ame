@@ -1,5 +1,5 @@
 <div class="contador-regressivo-container" style="display: none;">
-    <a class="contador-link" href="https://ameacessoriospet.com.br/cachorros1/kits1/?mpage=100" target="_blank">
+    <a class="contador-link" href="https://ameacessoriospet.com.br/cachorros1/kits1/?mpage=100" target="_blank" rel="noopener noreferrer">
         <div class="contador-mensagem">
             <p class="contador-mensagem-texto">ESQUENTA BLACK FRIDAY: KITS COM 20% OFF</p>
         </div>
