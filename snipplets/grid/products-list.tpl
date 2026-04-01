@@ -11,6 +11,58 @@
         {% endif %}
 
         {% include "snipplets/grid/pagination.tpl" with {infinite_scroll: pagination_type_val} %}
+
+        {#
+          Frontend Deduplication Script
+          Uses a MutationObserver to instantly remove duplicate product items
+          (same data-product-id) appended during infinite scroll pagination
+        #}
+        <script>
+            (function() {
+                var dedupProducts = function() {
+                    var seenIds = new Set();
+                    var items = document.querySelectorAll('.js-item-product');
+                    for (var i = 0; i < items.length; i++) {
+                        var item = items[i];
+                        var id = item.getAttribute('data-product-id');
+                        if (id) {
+                            if (seenIds.has(id)) {
+                                item.remove();
+                            } else {
+                                seenIds.add(id);
+                            }
+                        }
+                    }
+                };
+
+                // Run immediately for initial load
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', dedupProducts);
+                } else {
+                    dedupProducts();
+                }
+
+                // Setup observer for infinite scroll appends
+                window.addEventListener('load', function() {
+                    var grid = document.querySelector('.js-product-table');
+                    if (grid) {
+                        var observer = new MutationObserver(function(mutations) {
+                            var shouldDedup = false;
+                            for (var i = 0; i < mutations.length; i++) {
+                                if (mutations[i].addedNodes.length > 0) {
+                                    shouldDedup = true;
+                                    break;
+                                }
+                            }
+                            if (shouldDedup) {
+                                dedupProducts();
+                            }
+                        });
+                        observer.observe(grid, { childList: true, subtree: true });
+                    }
+                });
+            })();
+        </script>
     {% else %}
         {% if template == 'category' %}
             <div class="h6 py-5 text-center" data-component="filter.message">
