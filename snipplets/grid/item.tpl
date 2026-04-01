@@ -12,17 +12,18 @@
 {# percorrer as tags do produto #}
 {% for tag in product.tags %}
     {% set split_tag = tag|split('_') %}
-    {% if split_tag[0] == 'agrupamento' and not hide_product %}
+    {% if split_tag[0] == 'agrupamento' %}
         {% set product_have_agruped_tag = true %}
-        {% set hide_product = true %}
     {% elseif tag == 'produto_principal' %}
-        {% set product_have_agruped_tag = true %}
-        {% set hide_product = false %}
         {% set special_product = true %}
     {% elseif split_tag[0] == 'customizacao' %}
         {% set product_have_customization_tag = true %}
     {% endif %}
 {% endfor %}
+
+{% if product_have_agruped_tag and not special_product %}
+    {% set hide_product = true %}
+{% endif %}
 
 {% set slide_item = slide_item | default(false) %}
 
