@@ -91,6 +91,22 @@ lazySizesConfig.hFac = 0.4;
 
 DOMContentLoaded.addEventOrExecute(() => {
 
+    {% if template == 'category' or template == 'search' %}
+        {# Deduplicate products on initial load #}
+        let initSeenIds = new Set();
+        jQueryNuvem('.js-item-product').each(function() {
+            let id = jQueryNuvem(this).attr('data-product-id');
+            if (id) {
+                if (initSeenIds.has(id)) {
+                    jQueryNuvem(this).remove();
+                } else {
+                    initSeenIds.add(id);
+                }
+            }
+        });
+    {% endif %}
+
+
 	{#/*============================================================================
 	  #Notifications and tooltips
 	==============================================================================*/ #}
@@ -2134,6 +2150,19 @@ DOMContentLoaded.addEventOrExecute(() => {
                     productsPerPage: products_per_page_value,
                     afterLoaded: function(){
                         jQueryNuvem('.js-item-product').addClass('is-inViewport');
+
+                        {# Deduplicate products loaded via infinite scroll #}
+                        let seenIds = new Set();
+                        jQueryNuvem('.js-item-product').each(function() {
+                            let id = jQueryNuvem(this).attr('data-product-id');
+                            if (id) {
+                                if (seenIds.has(id)) {
+                                    jQueryNuvem(this).remove();
+                                } else {
+                                    seenIds.add(id);
+                                }
+                            }
+                        });
                     },
                 });
             {% endif %}
