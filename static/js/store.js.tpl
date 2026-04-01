@@ -925,7 +925,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                         {% endif %}
                     }
                 });
-            });
+            }, { passive: true });
         }
         
     {% if has_only_mobile_with_fixed_nav %}
@@ -2063,7 +2063,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                         });
                         isCategoriesOffsetTicking = true;
                     }
-                });
+                }, { passive: true });
 
             }
 
@@ -4106,7 +4106,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                         updateStickyState();
                         scrollTimeout = null;
                     }, 10);
-                });
+                }, { passive: true });
 
                 window.addEventListener('resize', updateStickyState);
                 updateStickyState();
