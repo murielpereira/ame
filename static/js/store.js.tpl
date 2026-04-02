@@ -3559,12 +3559,12 @@ DOMContentLoaded.addEventOrExecute(() => {
         jQueryNuvem(".lb-input-container input[type='text'], .lb-input-container textarea").on('focus', function() {
             var viewport = document.querySelector('meta[name=viewport]');
             if (viewport) {
-                viewport.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1');
             }
         }).on('blur', function() {
             var viewport = document.querySelector('meta[name=viewport]');
             if (viewport) {
-                viewport.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1');
             }
         });
     }

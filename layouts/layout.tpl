@@ -9,7 +9,7 @@
 
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{{ page_title }}</title>
         <meta name="description" content="{{ page_description }}" />
         <link rel="preload" href="{{ 'css/style-critical.scss' | static_url }}" as="style" />
@@ -128,8 +128,9 @@
         {% snipplet "header/header.tpl" %}
 
         {# Page content #}
-
-        {% template_content %}
+        <main>
+            {% template_content %}
+        </main>
 
         {# Quickshop modal #}
 
