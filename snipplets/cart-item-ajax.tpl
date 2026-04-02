@@ -71,7 +71,7 @@
           form_control_container_custom_class: 'js-cart-quantity-container col px-0'} %}
             {% block input_prepend_content %}
             <div class="form-row m-0 align-items-center">
-              <span class="js-cart-quantity-btn form-quantity-icon icon-30px font-small" onclick="LS.minusQuantity({{ item.id }}{% if not cart_page %}, true{% endif %})" data-component="quantity.minus">
+              <span class="js-cart-quantity-btn form-quantity-icon icon-30px font-small" onclick="LS.minusQuantity({{ item.id }}{% if not cart_page %}, true{% endif %})" data-component="quantity.minus" role="button" tabindex="0" aria-label="{{ 'Disminuir cantidad' | translate }}">
                 <svg class="icon-inline"><use xlink:href="#minus"/></svg>
               </span>
             {% endblock input_prepend_content %}
@@ -83,7 +83,7 @@
                 <svg class="icon-inline icon-spin svg-icon-text"><use xlink:href="#spinner-third"/></svg>
               </span>
 
-              <span class="js-cart-quantity-btn form-quantity-icon icon-30px font-small" onclick="LS.plusQuantity({{ item.id }}{% if not cart_page %}, true{% endif %})" data-component="quantity.plus">
+              <span class="js-cart-quantity-btn form-quantity-icon icon-30px font-small" onclick="LS.plusQuantity({{ item.id }}{% if not cart_page %}, true{% endif %})" data-component="quantity.plus" role="button" tabindex="0" aria-label="{{ 'Aumentar cantidad' | translate }}">
                 <svg class="icon-inline"><use xlink:href="#plus"/></svg>
               </span>
             </div>
