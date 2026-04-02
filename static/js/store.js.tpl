@@ -2296,7 +2296,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                 return el.value == option_id;
             });
             selected_option.prop('selected', true).trigger('change');
-            parent.find('.js-insta-variation-label').html(option_id);
+            parent.find('.js-insta-variation-label').text(option_id);
         }
 
         {% if settings.bullet_variants or settings.image_color_variants %}
@@ -3423,7 +3423,7 @@ DOMContentLoaded.addEventOrExecute(() => {
             jQueryNuvem("#cart-shipping-container").closest(".js-shipping-calculator-container") );
         }
 
-        jQueryNuvem(".js-shipping-calculator-current-zip").html(shipping_input_val);
+        jQueryNuvem(".js-shipping-calculator-current-zip").text(shipping_input_val);
         removeShippingSuboptions();
 	});
 
