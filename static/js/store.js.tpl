@@ -688,18 +688,29 @@ DOMContentLoaded.addEventOrExecute(() => {
         menuItems +=  jQueryNuvem(el).first(el => el.offsetWidth);
     });
 
-    jQueryNuvem(".js-nav-desktop-list").on("scroll", function() {
-        var position = jQueryNuvem('.js-nav-desktop-list').prop("scrollLeft");
-        if(position == 0) {
-            jQueryNuvem(".js-nav-desktop-list-arrow-left").addClass('disable');
-        } else {
-            jQueryNuvem(".js-nav-desktop-list-arrow-left").removeClass('disable');
-        }
-        if(position == ( menuItems - menuContainer )) {
-            jQueryNuvem(".js-nav-desktop-list-arrow-right").addClass('disable');
-        } else {
-            jQueryNuvem(".js-nav-desktop-list-arrow-right").removeClass('disable');
-        }
+    // ⚡ Bolt: Added state-tracking and { passive: true } to optimize scroll event
+    // This prevents continuous jQuery DOM manipulations on every single scroll frame
+    document.querySelectorAll('.js-nav-desktop-list').forEach(function(el) {
+        let isNavScrolling = false;
+        el.addEventListener("scroll", function() {
+            if (!isNavScrolling) {
+                window.requestAnimationFrame(function() {
+                    var position = el.scrollLeft;
+                    if(position == 0) {
+                        jQueryNuvem(".js-nav-desktop-list-arrow-left").addClass('disable');
+                    } else {
+                        jQueryNuvem(".js-nav-desktop-list-arrow-left").removeClass('disable');
+                    }
+                    if(position >= ( menuItems - menuContainer - 1 )) {
+                        jQueryNuvem(".js-nav-desktop-list-arrow-right").addClass('disable');
+                    } else {
+                        jQueryNuvem(".js-nav-desktop-list-arrow-right").removeClass('disable');
+                    }
+                    isNavScrolling = false;
+                });
+                isNavScrolling = true;
+            }
+        }, { passive: true });
     });
 
     {% if logo_desktop_left %}
