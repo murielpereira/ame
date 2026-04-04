@@ -5,3 +5,6 @@
 ## 2024-05-27 - Icon-only Div Buttons require ARIA context
 **Learning:** In TiendaNube `.tpl` themes, slider controls (like `js-swiper-product-thumbs-prev`) are often implemented using `<div>` elements containing only an `<svg>` icon without any accessible text or interactive roles.
 **Action:** Always add `role="button"`, `tabindex="0"`, and `aria-label="{{ 'Text' | translate }}"` to the container `div`, and `aria-hidden="true"` to the inner SVG to ensure these custom icon-only controls are perceivable and operable by screen readers and keyboard users.
+## 2025-04-03 - Use local HTML stubs for Playwright testing of Twig templates
+**Learning:** Playwright cannot directly render `.tpl` files containing Twig tags (like `{{ 'Text' | translate }}`), as the uncompiled template tags break the DOM parser and test assertions.
+**Action:** When using Playwright to visually verify isolated snippet changes in `.tpl` Twig files, bypass Twig parsing issues by creating a local HTML stub (e.g., `test.html`) that embeds the modified HTML snippet, and load it in Playwright via `page.goto('file:///...')`.
