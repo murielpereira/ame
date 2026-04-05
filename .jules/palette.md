@@ -5,3 +5,6 @@
 ## 2024-05-27 - Icon-only Div Buttons require ARIA context
 **Learning:** In TiendaNube `.tpl` themes, slider controls (like `js-swiper-product-thumbs-prev`) are often implemented using `<div>` elements containing only an `<svg>` icon without any accessible text or interactive roles.
 **Action:** Always add `role="button"`, `tabindex="0"`, and `aria-label="{{ 'Text' | translate }}"` to the container `div`, and `aria-hidden="true"` to the inner SVG to ensure these custom icon-only controls are perceivable and operable by screen readers and keyboard users.
+## 05-04-2025 - Icon-only Anchor Modal Controls require ARIA context
+**Learning:** Found that custom modal close controls embedded in TiendaNube Twig templates (`.tpl`) across various template files lack proper accessible names. They rely entirely on SVG icons without visible text.
+**Action:** When working on similar custom modal controls, specifically those using anchor `<a>` tags and icon SVGs to act as buttons, always inject `role="button"` and translated `aria-label` attributes to ensure they are keyboard and screen reader accessible without breaking existing visual styling or JavaScript event listeners.
