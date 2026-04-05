@@ -2762,8 +2762,8 @@ DOMContentLoaded.addEventOrExecute(() => {
         var current_percentage_value = $this_product_container.find(".js-offer-percentage");
 
         // Get the current product price and promotional price
-        var compare_price_value = $this_compare_price.html();
-        var price_value = $this_price.html();
+        var compare_price_value = $this_compare_price.text();
+        var price_value = $this_price.text();
 
         // Calculate new discount percentage based on difference between filtered old and new prices
         const percentageDifference = window.moneyDifferenceCalculator.percentageDifferenceFromString(compare_price_value, price_value);
@@ -3455,7 +3455,7 @@ DOMContentLoaded.addEventOrExecute(() => {
         LS.addToTotal(shippingPrice);
 
         let total = (LS.data.cart.total / 100) + parseFloat(shippingPrice);
-        jQueryNuvem(".js-cart-widget-total").html(LS.formatToCurrency(total));
+        jQueryNuvem(".js-cart-widget-total").text(LS.formatToCurrency(total));
 
         selectShippingOption(this, false);
     });
