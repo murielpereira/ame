@@ -20,8 +20,8 @@
                                     <div class="js-item-name h2 mb-2 mb-md-0" data-store="product-item-price-{{ product.id }}"></div>
                                 </div>
                                 <div class="col-auto d-none d-md-block">
-                                    <a href="#" class="js-modal-close modal-close pr-0 py-0" aria-label="{{ 'Cerrar' | translate }}">
-                                        <svg class="icon-inline svg-icon-text"><use xlink:href="#times"/></svg>
+                                    <a class="js-modal-close modal-close pr-0 py-0" href="#" role="button" aria-label="{{ 'Cerrar' | translate }}">
+                                        <svg class="icon-inline svg-icon-text" aria-hidden="true"><use xlink:href="#times"/></svg>
                                     </a>
                                 </div>
                             </div>

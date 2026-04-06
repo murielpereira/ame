@@ -3,9 +3,9 @@
 {% set suggestions_container_class = search_modal ? '' : 'card mt-2' %}
 
 {% if search_modal %}
-    <a href="#" class="js-modal-close js-fullscreen-modal-close search-btn search-close-btn" aria-label="{{ 'Cerrar' | translate }}" role="button">
-        <svg class="icon-inline font-big svg-icon-text icon-flip-horizontal {% if not settings.search_big_desktop %}d-md-none{% endif %}"><use xlink:href="#chevron"/></svg>
-        <svg class="icon-inline icon-lg svg-icon-text d-none d-md-block"><use xlink:href="#times"/></svg>
+    <a href="#" class="js-modal-close js-fullscreen-modal-close search-btn search-close-btn" role="button" aria-label="{{ 'Cerrar' | translate }}">
+        <svg class="icon-inline font-big svg-icon-text icon-flip-horizontal {% if not settings.search_big_desktop %}d-md-none{% endif %}" aria-hidden="true"><use xlink:href="#chevron"/></svg>
+        <svg class="icon-inline icon-lg svg-icon-text d-none d-md-block" aria-hidden="true"><use xlink:href="#times"/></svg>
     </a>
 {% endif %}
 

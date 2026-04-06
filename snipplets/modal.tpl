@@ -39,13 +39,13 @@
                                 {% block modal_head %}{% endblock %}
                             </div>
                             <div class="col-auto">
-                                <a href="#" class="js-modal-close modal-close" aria-label="{{ 'Cerrar' | translate }}" role="button">
-                                    <svg class="icon-inline svg-icon-text"><use xlink:href="#times"/></svg>
+                                <a class="js-modal-close modal-close" href="#" role="button" aria-label="{{ 'Cerrar' | translate }}">
+                                    <svg class="icon-inline svg-icon-text" aria-hidden="true"><use xlink:href="#times"/></svg>
                                 </a>
                             </div>
                         </div>
                     {% else %}
-                        <svg class="icon-inline svg-icon-text"><use xlink:href="#times"/></svg>
+                        <svg class="icon-inline svg-icon-text" aria-hidden="true"><use xlink:href="#times"/></svg>
                     {% endif %}
                 </div>
                 <div class="modal-body {{ modal_body_class }}">
