@@ -8,3 +8,6 @@
 ## 05-04-2025 - Icon-only Anchor Modal Controls require ARIA context
 **Learning:** Found that custom modal close controls embedded in TiendaNube Twig templates (`.tpl`) across various template files lack proper accessible names. They rely entirely on SVG icons without visible text.
 **Action:** When working on similar custom modal controls, specifically those using anchor `<a>` tags and icon SVGs to act as buttons, always inject `role="button"` and translated `aria-label` attributes to ensure they are keyboard and screen reader accessible without breaking existing visual styling or JavaScript event listeners.
+## 2025-04-03 - Use local HTML stubs for Playwright testing of Twig templates
+**Learning:** Playwright cannot directly render `.tpl` files containing Twig tags (like `{{ 'Text' | translate }}`), as the uncompiled template tags break the DOM parser and test assertions.
+**Action:** When using Playwright to visually verify isolated snippet changes in `.tpl` Twig files, bypass Twig parsing issues by creating a local HTML stub (e.g., `test.html`) that embeds the modified HTML snippet, and load it in Playwright via `page.goto('file:///...')`.
