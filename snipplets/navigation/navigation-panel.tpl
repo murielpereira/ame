@@ -10,7 +10,7 @@
             </a>
     </div>
     <div class="col-auto pr-0">
-        <a href="#" class="js-modal-close modal-close" aria-label="{{ 'Cerrar' | translate }}">
+        <a href="#" class="js-modal-close modal-close" aria-label="{{ 'Cerrar' | translate }}" role="button">
             <svg class="icon-inline svg-icon-text"><use xlink:href="#times"/></svg>
         </a>  
     </div>
