@@ -3723,6 +3723,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                     swiperInstance.allVideos = swiperInstance.el.querySelectorAll('video');
 
                     // Aguardar um pouco para garantir que o DOM esteja pronto
+                    const self = this;
                     setTimeout(function() {
                         // No mobile, carregar os 2 vídeos visíveis inicialmente
                         if (window.innerWidth <= 767) {
@@ -3733,6 +3734,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                             if (nextSlide) visibleSlides.push(nextSlide);
                             
                             visibleSlides.forEach(function(slide, index) {
+                                if (!slide) return;
                                 const video = slide.querySelector('.lb-showcase-video-item-video-video-wrapper video');
                                 if (video) {
                                     // Carregar o vídeo (sem dar play)
@@ -3748,7 +3750,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                             });
                         } else {
                             // No desktop, comportamento original
-                            const itemActive = swiperInstance.slides[swiperInstance.activeIndex];
+                            const itemActive = self.slides[self.activeIndex];
                             if (itemActive) {
                                 const video = itemActive.querySelector('.lb-showcase-video-item-video-video-wrapper video');
                                 if (video) {
@@ -3834,6 +3836,8 @@ DOMContentLoaded.addEventOrExecute(() => {
                             this.allVideos = this.el.querySelectorAll('video');
                             // Armazenar a referência da instância
                             window.modalSwiperInstance = this;
+                            // ⚡ Bolt: Cache all videos on init to avoid repetitive DOM queries
+                            this.allVideos = Array.from(this.el.querySelectorAll('.swiper-slide video'));
                         },
                         slideChange: function () {
                             console.log('Slide do modal mudou para:', this.activeIndex);
@@ -3846,6 +3850,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                             }
                             
                             // Dar play no vídeo do slide ativo
+                            const self = this;
                             setTimeout(function() {
                                 const activeSlide = this.slides[this.activeIndex];
                                 if (!activeSlide) return;
