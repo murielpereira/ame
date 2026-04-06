@@ -82,12 +82,18 @@
                     <img alt="{{ item_img_alt }}" 
                         src="{{ 'images/empty-placeholder.png' | static_url }}" 
                         data-srcset="{{ item_img_srcset | product_image_url('medium')}} 320w" 
+                        width="{{ item_img_width }}" height="{{ item_img_height }}"
+                        width="{{ item_img_width }}"
+                        height="{{ item_img_height }}"
                         class="js-item-image lazyload img-absolute img-absolute-centered fade-in {% if not product.available %}opacity-50{% endif %} {% if show_secondary_image %}item-image-primary{% endif %}"/> 
                     
                     {% if show_secondary_image %}
                         <img alt="{{ item_img_alt }}" 
                             src="{{ 'images/empty-placeholder.png' | static_url }}" 
                             data-srcset="{{ product.other_images | first | product_image_url('medium')}} 320w" 
+                            width="{{ (product.other_images | first).dimensions['width'] }}" height="{{ (product.other_images | first).dimensions['height'] }}"
+                            width="{{ item_img_width }}"
+                            height="{{ item_img_height }}"
                             class="js-item-image js-item-image-secondary lazyload img-absolute img-absolute-centered fade-in item-image-secondary" 
                             style="display:none;" />
                     {% endif %}

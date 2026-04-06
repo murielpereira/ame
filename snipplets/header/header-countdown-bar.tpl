@@ -35,10 +35,10 @@
 
 <script>
 // --- Injeção Ultra-Segura (sem filtros 'default') ---
-const rawEnabled = '{{ settings.COUNTDOWN_ENABLE }}';
-const rawDate = '{{ settings.COUNTDOWN_DATE }}';
-const rawMessage = '{{ settings.COUNTDOWN_MESSAGE }}';
-const rawLink = '{{ settings.COUNTDOWN_LINK }}';
+const rawEnabled = '{{ settings.COUNTDOWN_ENABLE | escape('js') }}';
+const rawDate = '{{ settings.COUNTDOWN_DATE | escape('js') }}';
+const rawMessage = '{{ settings.COUNTDOWN_MESSAGE | escape('js') }}';
+const rawLink = '{{ settings.COUNTDOWN_LINK | escape('js') }}';
 
 // --- JavaScript aplica os defaults ---
 const countdownEnabled = rawEnabled || '0'; 
