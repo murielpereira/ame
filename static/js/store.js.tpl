@@ -3718,19 +3718,20 @@ DOMContentLoaded.addEventOrExecute(() => {
             },
             on: {
                 init: function () {
-                    // ⚡ Bolt: Cache all videos on init to avoid repetitive DOM queries
-                    this.allVideos = Array.from(this.el.querySelectorAll('.swiper-slide video'));
+                    const swiperInstance = this;
+                    // Cache DOM elements
+                    swiperInstance.allVideos = swiperInstance.el.querySelectorAll('video');
 
                     // Aguardar um pouco para garantir que o DOM esteja pronto
                     const self = this;
                     setTimeout(function() {
                         // No mobile, carregar os 2 vídeos visíveis inicialmente
                         if (window.innerWidth <= 767) {
-                            const activeIndex = self.activeIndex;
-                            const visibleSlides = [self.slides[activeIndex]];
-                            if (activeIndex + 1 < self.slides.length) {
-                                visibleSlides.push(self.slides[activeIndex + 1]);
-                            }
+                            const activeSlide = swiperInstance.slides[swiperInstance.activeIndex];
+                            const nextSlide = swiperInstance.slides[swiperInstance.activeIndex + 1];
+                            const visibleSlides = [];
+                            if (activeSlide) visibleSlides.push(activeSlide);
+                            if (nextSlide) visibleSlides.push(nextSlide);
                             
                             visibleSlides.forEach(function(slide, index) {
                                 if (!slide) return;
@@ -3762,14 +3763,14 @@ DOMContentLoaded.addEventOrExecute(() => {
                     }, 100);
                 },
                 slideChangeTransitionEnd: function () {
-                    // ⚡ Bolt: Use cached videos instead of global document query
-                    if (this.allVideos) {
-                        this.allVideos.forEach(function(video) {
+                    const swiperInstance = this;
+                    if (swiperInstance.allVideos) {
+                        swiperInstance.allVideos.forEach(function(video) {
                             video.pause();
                         });
                     }
 
-                    const itemActive = this.slides[this.activeIndex];
+                    const itemActive = swiperInstance.slides[swiperInstance.activeIndex];
 
                     if( itemActive ) {
                         const video = itemActive.querySelector('.lb-showcase-video-item-video-video-wrapper video');
@@ -3781,27 +3782,26 @@ DOMContentLoaded.addEventOrExecute(() => {
                     }
                 },
                 slideChange: function () {
-                    // ⚡ Bolt: Use cached videos instead of global document query
-                    if (this.allVideos) {
-                        this.allVideos.forEach(function(video) {
+                    const swiperInstance = this;
+                    // aqui vamos pausar todos os videos primeiro
+                    if (swiperInstance.allVideos) {
+                        swiperInstance.allVideos.forEach(function(video) {
                             video.pause();
                         });
                     }
 
                     // No mobile, pré-carregar o próximo vídeo se existir
                     if (window.innerWidth <= 767) {
-                        if (this.activeIndex + 1 < this.slides.length) {
-                            const nextSlide = this.slides[this.activeIndex + 1];
-                            if (nextSlide) {
-                                const nextVideo = nextSlide.querySelector('.lb-showcase-video-item-video-video-wrapper video');
-                                if (nextVideo && nextVideo.readyState < 2) { // Se não estiver carregado
-                                    nextVideo.load();
-                                }
+                        const nextSlide = swiperInstance.slides[swiperInstance.activeIndex + 1];
+                        if (nextSlide) {
+                            const nextVideo = nextSlide.querySelector('.lb-showcase-video-item-video-video-wrapper video');
+                            if (nextVideo && nextVideo.readyState < 2) { // Se não estiver carregado
+                                nextVideo.load();
                             }
                         }
                     }
 
-                    const itemActive = this.slides[this.activeIndex];
+                    const itemActive = swiperInstance.slides[swiperInstance.activeIndex];
 
                     if( itemActive ) {
                         const video = itemActive.querySelector('.lb-showcase-video-item-video-video-wrapper video');
@@ -3832,6 +3832,8 @@ DOMContentLoaded.addEventOrExecute(() => {
                     on: {
                         init: function() {
                             console.log('Modal Swiper inicializado');
+                            // Cache DOM elements
+                            this.allVideos = this.el.querySelectorAll('video');
                             // Armazenar a referência da instância
                             window.modalSwiperInstance = this;
                             // ⚡ Bolt: Cache all videos on init to avoid repetitive DOM queries
@@ -3840,7 +3842,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                         slideChange: function () {
                             console.log('Slide do modal mudou para:', this.activeIndex);
                             
-                            // ⚡ Bolt: Use cached videos instead of global document query
+                            // Pausar todos os vídeos do modal
                             if (this.allVideos) {
                                 this.allVideos.forEach(function(video) {
                                     video.pause();
@@ -3850,8 +3852,10 @@ DOMContentLoaded.addEventOrExecute(() => {
                             // Dar play no vídeo do slide ativo
                             const self = this;
                             setTimeout(function() {
-                                const activeSlide = self.slides[self.activeIndex];
-                                const activeModalVideo = activeSlide ? activeSlide.querySelector('video') : null;
+                                const activeSlide = this.slides[this.activeIndex];
+                                if (!activeSlide) return;
+
+                                const activeModalVideo = activeSlide.querySelector('video');
                                 console.log('Vídeo ativo encontrado no slideChange:', activeModalVideo);
                                 if (activeModalVideo) {
                                     // Verificar se o vídeo tem data-src, senão usar o src original
@@ -3869,7 +3873,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                                 } else {
                                     console.log('Vídeo ativo não encontrado no slide', this.activeIndex);
                                 }
-                            }, 300);
+                            }.bind(this), 300);
                         }
                     }
                 });
