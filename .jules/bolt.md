@@ -14,3 +14,7 @@
 **Learning:** Scroll event listeners in the frontend used for things like lazy loading can block the main thread and impact scrolling performance.
 **Action:** Always prefer `IntersectionObserver` for lazy loading logic over throttling scroll events.
 >>>>>>> origin/bolt/intersection-observer-lazy-load-17289792565937233437
+
+## 2024-05-28 - Optimized Swiper Slider DOM Queries & Redundant Listeners
+**Learning:** In sliders with videos (`js-section-video-products`), querying the global DOM (e.g., `document.querySelectorAll`) inside Swiper callbacks (`slideChange`) is very expensive. Furthermore, attaching `timeupdate` and `ended` listeners to elements repeatedly without a guard causes significant memory leaks and duplicate handler executions.
+**Action:** Always cache slider-specific DOM nodes (like `this.allVideos`) inside the `init` event, and access active/next slides using Swiper's internal array (`this.slides[this.activeIndex]`). Use a `dataset` attribute (e.g., `dataset.progressInitialized`) as a guard to ensure event listeners are attached only once.

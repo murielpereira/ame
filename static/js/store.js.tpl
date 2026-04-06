@@ -3603,26 +3603,29 @@ DOMContentLoaded.addEventOrExecute(() => {
 
         // Função para inicializar a barra de progresso do vídeo
         function initVideoProgress(video) {
-            const progressFill = video.parentElement.querySelector('.video-progress-fill');
-            
-            if (!progressFill) return;
-            
-            // Reset da barra de progresso
+        const progressFill = video.parentElement.querySelector('.video-progress-fill');
+
+        if (!progressFill) return;
+
+        // Reset da barra de progresso
+        progressFill.style.width = '0%';
+
+        if (video.dataset.progressInitialized) return;
+        video.dataset.progressInitialized = "true";
+
+        // Atualizar progresso durante a reprodução
+        video.addEventListener('timeupdate', function() {
+            if (video.duration > 0) {
+                const progress = (video.currentTime / video.duration) * 100;
+                progressFill.style.width = progress + '%';
+            }
+        });
+
+        // Reset quando o vídeo termina (devido ao loop)
+        video.addEventListener('ended', function() {
             progressFill.style.width = '0%';
-            
-            // Atualizar progresso durante a reprodução
-            video.addEventListener('timeupdate', function() {
-                if (video.duration > 0) {
-                    const progress = (video.currentTime / video.duration) * 100;
-                    progressFill.style.width = progress + '%';
-                }
-            });
-            
-            // Reset quando o vídeo termina (devido ao loop)
-            video.addEventListener('ended', function() {
-                progressFill.style.width = '0%';
-            });
-        }
+        });
+    }
 
         {# /* // Home showcase videos */ #}
 
@@ -3842,6 +3845,8 @@ DOMContentLoaded.addEventOrExecute(() => {
                     },
                     on: {
                         init: function() {
+                            const self = this;
+                            self.allVideos = Array.from(document.querySelectorAll('.js-section-video-products-modal .swiper-slide video'));
                             console.log('Modal Swiper inicializado');
                             // Cache DOM elements
                             this.allVideos = this.el.querySelectorAll('video');
@@ -3851,7 +3856,8 @@ DOMContentLoaded.addEventOrExecute(() => {
                             this.allVideos = Array.from(this.el.querySelectorAll('.swiper-slide video'));
                         },
                         slideChange: function () {
-                            console.log('Slide do modal mudou para:', this.activeIndex);
+                            const self = this;
+                            console.log('Slide do modal mudou para:', self.activeIndex);
                             
                             // Pausar todos os vídeos do modal
                             if (this.allVideos) {
@@ -3882,7 +3888,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                                         console.log('URL do vídeo inválida:', videoSrc);
                                     }
                                 } else {
-                                    console.log('Vídeo ativo não encontrado no slide', this.activeIndex);
+                                    console.log('Vídeo ativo não encontrado no slide', self.activeIndex);
                                 }
                             }.bind(this), 300);
                         }
@@ -4160,6 +4166,9 @@ DOMContentLoaded.addEventOrExecute(() => {
         // Reset da barra de progresso
         progressFill.style.width = '0%';
         
+        if (video.dataset.progressInitialized) return;
+        video.dataset.progressInitialized = "true";
+
         // Atualizar progresso durante a reprodução
         video.addEventListener('timeupdate', function() {
             if (video.duration > 0) {
