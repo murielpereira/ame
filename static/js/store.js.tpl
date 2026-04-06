@@ -2762,8 +2762,8 @@ DOMContentLoaded.addEventOrExecute(() => {
         var current_percentage_value = $this_product_container.find(".js-offer-percentage");
 
         // Get the current product price and promotional price
-        var compare_price_value = $this_compare_price.html();
-        var price_value = $this_price.html();
+        var compare_price_value = $this_compare_price.text();
+        var price_value = $this_price.text();
 
         // Calculate new discount percentage based on difference between filtered old and new prices
         const percentageDifference = window.moneyDifferenceCalculator.percentageDifferenceFromString(compare_price_value, price_value);
@@ -3455,7 +3455,7 @@ DOMContentLoaded.addEventOrExecute(() => {
         LS.addToTotal(shippingPrice);
 
         let total = (LS.data.cart.total / 100) + parseFloat(shippingPrice);
-        jQueryNuvem(".js-cart-widget-total").html(LS.formatToCurrency(total));
+        jQueryNuvem(".js-cart-widget-total").text(LS.formatToCurrency(total));
 
         selectShippingOption(this, false);
     });
@@ -3718,13 +3718,23 @@ DOMContentLoaded.addEventOrExecute(() => {
             },
             on: {
                 init: function () {
+                    const swiperInstance = this;
+                    // Cache DOM elements
+                    swiperInstance.allVideos = swiperInstance.el.querySelectorAll('video');
+
                     // Aguardar um pouco para garantir que o DOM esteja pronto
+                    const self = this;
                     setTimeout(function() {
                         // No mobile, carregar os 2 vídeos visíveis inicialmente
                         if (window.innerWidth <= 767) {
-                            const visibleSlides = document.querySelectorAll('.js-section-video-products .swiper-slide.swiper-slide-active, .js-section-video-products .swiper-slide.swiper-slide-next');
+                            const activeSlide = swiperInstance.slides[swiperInstance.activeIndex];
+                            const nextSlide = swiperInstance.slides[swiperInstance.activeIndex + 1];
+                            const visibleSlides = [];
+                            if (activeSlide) visibleSlides.push(activeSlide);
+                            if (nextSlide) visibleSlides.push(nextSlide);
                             
                             visibleSlides.forEach(function(slide, index) {
+                                if (!slide) return;
                                 const video = slide.querySelector('.lb-showcase-video-item-video-video-wrapper video');
                                 if (video) {
                                     // Carregar o vídeo (sem dar play)
@@ -3740,7 +3750,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                             });
                         } else {
                             // No desktop, comportamento original
-                            const itemActive = document.querySelector('.js-section-video-products .swiper-slide.swiper-slide-active');
+                            const itemActive = self.slides[self.activeIndex];
                             if (itemActive) {
                                 const video = itemActive.querySelector('.lb-showcase-video-item-video-video-wrapper video');
                                 if (video) {
@@ -3753,12 +3763,14 @@ DOMContentLoaded.addEventOrExecute(() => {
                     }, 100);
                 },
                 slideChangeTransitionEnd: function () {
-                    var allVideos = document.querySelectorAll('.js-section-video-products .swiper-slide video');
-                    allVideos.forEach(function(video) {
-                        video.pause();
-                    });
+                    const swiperInstance = this;
+                    if (swiperInstance.allVideos) {
+                        swiperInstance.allVideos.forEach(function(video) {
+                            video.pause();
+                        });
+                    }
 
-                    const itemActive = document.querySelector('.js-section-video-products .swiper-slide.swiper-slide-active');
+                    const itemActive = swiperInstance.slides[swiperInstance.activeIndex];
 
                     if( itemActive ) {
                         const video = itemActive.querySelector('.lb-showcase-video-item-video-video-wrapper video');
@@ -3770,15 +3782,17 @@ DOMContentLoaded.addEventOrExecute(() => {
                     }
                 },
                 slideChange: function () {
+                    const swiperInstance = this;
                     // aqui vamos pausar todos os videos primeiro
-                    var allVideos = document.querySelectorAll('.js-section-video-products .swiper-slide video');
-                    allVideos.forEach(function(video) {
-                        video.pause();
-                    });
+                    if (swiperInstance.allVideos) {
+                        swiperInstance.allVideos.forEach(function(video) {
+                            video.pause();
+                        });
+                    }
 
                     // No mobile, pré-carregar o próximo vídeo se existir
                     if (window.innerWidth <= 767) {
-                        const nextSlide = document.querySelector('.js-section-video-products .swiper-slide.swiper-slide-next');
+                        const nextSlide = swiperInstance.slides[swiperInstance.activeIndex + 1];
                         if (nextSlide) {
                             const nextVideo = nextSlide.querySelector('.lb-showcase-video-item-video-video-wrapper video');
                             if (nextVideo && nextVideo.readyState < 2) { // Se não estiver carregado
@@ -3787,7 +3801,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                         }
                     }
 
-                    const itemActive = document.querySelector('.js-section-video-products .swiper-slide.swiper-slide-active');
+                    const itemActive = swiperInstance.slides[swiperInstance.activeIndex];
 
                     if( itemActive ) {
                         const video = itemActive.querySelector('.lb-showcase-video-item-video-video-wrapper video');
@@ -3818,21 +3832,30 @@ DOMContentLoaded.addEventOrExecute(() => {
                     on: {
                         init: function() {
                             console.log('Modal Swiper inicializado');
+                            // Cache DOM elements
+                            this.allVideos = this.el.querySelectorAll('video');
                             // Armazenar a referência da instância
                             window.modalSwiperInstance = this;
+                            // ⚡ Bolt: Cache all videos on init to avoid repetitive DOM queries
+                            this.allVideos = Array.from(this.el.querySelectorAll('.swiper-slide video'));
                         },
                         slideChange: function () {
                             console.log('Slide do modal mudou para:', this.activeIndex);
                             
                             // Pausar todos os vídeos do modal
-                            var allModalVideos = document.querySelectorAll('.js-section-video-products-modal .swiper-slide video');
-                            allModalVideos.forEach(function(video) {
-                                video.pause();
-                            });
+                            if (this.allVideos) {
+                                this.allVideos.forEach(function(video) {
+                                    video.pause();
+                                });
+                            }
                             
                             // Dar play no vídeo do slide ativo
+                            const self = this;
                             setTimeout(function() {
-                                const activeModalVideo = document.querySelector('.js-section-video-products-modal .swiper-slide-active video');
+                                const activeSlide = this.slides[this.activeIndex];
+                                if (!activeSlide) return;
+
+                                const activeModalVideo = activeSlide.querySelector('video');
                                 console.log('Vídeo ativo encontrado no slideChange:', activeModalVideo);
                                 if (activeModalVideo) {
                                     // Verificar se o vídeo tem data-src, senão usar o src original
@@ -3841,16 +3864,16 @@ DOMContentLoaded.addEventOrExecute(() => {
                                         activeModalVideo.setAttribute('src', videoSrc);
                                         activeModalVideo.play().then(function() {
                                             console.log('Vídeo do slide', this.activeIndex, 'iniciado com sucesso');
-                                        }).catch(function(error) {
+                                        }.bind(this)).catch(function(error) {
                                             console.log('Erro ao dar play no vídeo do slide', this.activeIndex, ':', error);
-                                        });
+                                        }.bind(this));
                                     } else {
                                         console.log('URL do vídeo inválida:', videoSrc);
                                     }
                                 } else {
                                     console.log('Vídeo ativo não encontrado no slide', this.activeIndex);
                                 }
-                            }, 300);
+                            }.bind(this), 300);
                         }
                     }
                 });
