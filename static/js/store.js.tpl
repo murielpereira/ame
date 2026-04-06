@@ -688,18 +688,29 @@ DOMContentLoaded.addEventOrExecute(() => {
         menuItems +=  jQueryNuvem(el).first(el => el.offsetWidth);
     });
 
-    jQueryNuvem(".js-nav-desktop-list").on("scroll", function() {
-        var position = jQueryNuvem('.js-nav-desktop-list').prop("scrollLeft");
-        if(position == 0) {
-            jQueryNuvem(".js-nav-desktop-list-arrow-left").addClass('disable');
-        } else {
-            jQueryNuvem(".js-nav-desktop-list-arrow-left").removeClass('disable');
-        }
-        if(position == ( menuItems - menuContainer )) {
-            jQueryNuvem(".js-nav-desktop-list-arrow-right").addClass('disable');
-        } else {
-            jQueryNuvem(".js-nav-desktop-list-arrow-right").removeClass('disable');
-        }
+    // ⚡ Bolt: Added state-tracking and { passive: true } to optimize scroll event
+    // This prevents continuous jQuery DOM manipulations on every single scroll frame
+    document.querySelectorAll('.js-nav-desktop-list').forEach(function(el) {
+        let isNavScrolling = false;
+        el.addEventListener("scroll", function() {
+            if (!isNavScrolling) {
+                window.requestAnimationFrame(function() {
+                    var position = el.scrollLeft;
+                    if(position == 0) {
+                        jQueryNuvem(".js-nav-desktop-list-arrow-left").addClass('disable');
+                    } else {
+                        jQueryNuvem(".js-nav-desktop-list-arrow-left").removeClass('disable');
+                    }
+                    if(position >= ( menuItems - menuContainer - 1 )) {
+                        jQueryNuvem(".js-nav-desktop-list-arrow-right").addClass('disable');
+                    } else {
+                        jQueryNuvem(".js-nav-desktop-list-arrow-right").removeClass('disable');
+                    }
+                    isNavScrolling = false;
+                });
+                isNavScrolling = true;
+            }
+        }, { passive: true });
     });
 
     {% if logo_desktop_left %}
@@ -2762,8 +2773,8 @@ DOMContentLoaded.addEventOrExecute(() => {
         var current_percentage_value = $this_product_container.find(".js-offer-percentage");
 
         // Get the current product price and promotional price
-        var compare_price_value = $this_compare_price.html();
-        var price_value = $this_price.html();
+        var compare_price_value = $this_compare_price.text();
+        var price_value = $this_price.text();
 
         // Calculate new discount percentage based on difference between filtered old and new prices
         const percentageDifference = window.moneyDifferenceCalculator.percentageDifferenceFromString(compare_price_value, price_value);
@@ -3455,7 +3466,7 @@ DOMContentLoaded.addEventOrExecute(() => {
         LS.addToTotal(shippingPrice);
 
         let total = (LS.data.cart.total / 100) + parseFloat(shippingPrice);
-        jQueryNuvem(".js-cart-widget-total").html(LS.formatToCurrency(total));
+        jQueryNuvem(".js-cart-widget-total").text(LS.formatToCurrency(total));
 
         selectShippingOption(this, false);
     });
@@ -3721,17 +3732,23 @@ DOMContentLoaded.addEventOrExecute(() => {
             },
             on: {
                 init: function () {
-                    const self = this;
-                    self.allVideos = Array.from(document.querySelectorAll('.js-section-video-products .swiper-slide video'));
+                    const swiperInstance = this;
+                    // Cache DOM elements
+                    swiperInstance.allVideos = swiperInstance.el.querySelectorAll('video');
+
                     // Aguardar um pouco para garantir que o DOM esteja pronto
+                    const self = this;
                     setTimeout(function() {
                         // No mobile, carregar os 2 vídeos visíveis inicialmente
                         if (window.innerWidth <= 767) {
-                            const slideActive = self.slides[self.activeIndex];
-                            const slideNext = self.slides[self.activeIndex + 1];
-                            const visibleSlides = [slideActive, slideNext].filter(Boolean);
+                            const activeSlide = swiperInstance.slides[swiperInstance.activeIndex];
+                            const nextSlide = swiperInstance.slides[swiperInstance.activeIndex + 1];
+                            const visibleSlides = [];
+                            if (activeSlide) visibleSlides.push(activeSlide);
+                            if (nextSlide) visibleSlides.push(nextSlide);
                             
                             visibleSlides.forEach(function(slide, index) {
+                                if (!slide) return;
                                 const video = slide.querySelector('.lb-showcase-video-item-video-video-wrapper video');
                                 if (video) {
                                     // Carregar o vídeo (sem dar play)
@@ -3760,14 +3777,14 @@ DOMContentLoaded.addEventOrExecute(() => {
                     }, 100);
                 },
                 slideChangeTransitionEnd: function () {
-                    const self = this;
-                    if (self.allVideos) {
-                        self.allVideos.forEach(function(video) {
+                    const swiperInstance = this;
+                    if (swiperInstance.allVideos) {
+                        swiperInstance.allVideos.forEach(function(video) {
                             video.pause();
                         });
                     }
 
-                    const itemActive = self.slides[self.activeIndex];
+                    const itemActive = swiperInstance.slides[swiperInstance.activeIndex];
 
                     if( itemActive ) {
                         const video = itemActive.querySelector('.lb-showcase-video-item-video-video-wrapper video');
@@ -3779,17 +3796,17 @@ DOMContentLoaded.addEventOrExecute(() => {
                     }
                 },
                 slideChange: function () {
-                    const self = this;
+                    const swiperInstance = this;
                     // aqui vamos pausar todos os videos primeiro
-                    if (self.allVideos) {
-                        self.allVideos.forEach(function(video) {
+                    if (swiperInstance.allVideos) {
+                        swiperInstance.allVideos.forEach(function(video) {
                             video.pause();
                         });
                     }
 
                     // No mobile, pré-carregar o próximo vídeo se existir
                     if (window.innerWidth <= 767) {
-                        const nextSlide = self.slides[self.activeIndex + 1];
+                        const nextSlide = swiperInstance.slides[swiperInstance.activeIndex + 1];
                         if (nextSlide) {
                             const nextVideo = nextSlide.querySelector('.lb-showcase-video-item-video-video-wrapper video');
                             if (nextVideo && nextVideo.readyState < 2) { // Se não estiver carregado
@@ -3798,7 +3815,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                         }
                     }
 
-                    const itemActive = self.slides[self.activeIndex];
+                    const itemActive = swiperInstance.slides[swiperInstance.activeIndex];
 
                     if( itemActive ) {
                         const video = itemActive.querySelector('.lb-showcase-video-item-video-video-wrapper video');
@@ -3831,24 +3848,31 @@ DOMContentLoaded.addEventOrExecute(() => {
                             const self = this;
                             self.allVideos = Array.from(document.querySelectorAll('.js-section-video-products-modal .swiper-slide video'));
                             console.log('Modal Swiper inicializado');
+                            // Cache DOM elements
+                            this.allVideos = this.el.querySelectorAll('video');
                             // Armazenar a referência da instância
                             window.modalSwiperInstance = this;
+                            // ⚡ Bolt: Cache all videos on init to avoid repetitive DOM queries
+                            this.allVideos = Array.from(this.el.querySelectorAll('.swiper-slide video'));
                         },
                         slideChange: function () {
                             const self = this;
                             console.log('Slide do modal mudou para:', self.activeIndex);
                             
                             // Pausar todos os vídeos do modal
-                            if (self.allVideos) {
-                                self.allVideos.forEach(function(video) {
+                            if (this.allVideos) {
+                                this.allVideos.forEach(function(video) {
                                     video.pause();
                                 });
                             }
                             
                             // Dar play no vídeo do slide ativo
+                            const self = this;
                             setTimeout(function() {
-                                const activeSlide = self.slides[self.activeIndex];
-                                const activeModalVideo = activeSlide ? activeSlide.querySelector('video') : null;
+                                const activeSlide = this.slides[this.activeIndex];
+                                if (!activeSlide) return;
+
+                                const activeModalVideo = activeSlide.querySelector('video');
                                 console.log('Vídeo ativo encontrado no slideChange:', activeModalVideo);
                                 if (activeModalVideo) {
                                     // Verificar se o vídeo tem data-src, senão usar o src original
@@ -3856,17 +3880,17 @@ DOMContentLoaded.addEventOrExecute(() => {
                                     if (videoSrc && videoSrc !== 'null') {
                                         activeModalVideo.setAttribute('src', videoSrc);
                                         activeModalVideo.play().then(function() {
-                                            console.log('Vídeo do slide', self.activeIndex, 'iniciado com sucesso');
-                                        }).catch(function(error) {
-                                            console.log('Erro ao dar play no vídeo do slide', self.activeIndex, ':', error);
-                                        });
+                                            console.log('Vídeo do slide', this.activeIndex, 'iniciado com sucesso');
+                                        }.bind(this)).catch(function(error) {
+                                            console.log('Erro ao dar play no vídeo do slide', this.activeIndex, ':', error);
+                                        }.bind(this));
                                     } else {
                                         console.log('URL do vídeo inválida:', videoSrc);
                                     }
                                 } else {
                                     console.log('Vídeo ativo não encontrado no slide', self.activeIndex);
                                 }
-                            }, 300);
+                            }.bind(this), 300);
                         }
                     }
                 });
