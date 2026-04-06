@@ -429,3 +429,75 @@ document.addEventListener("DOMContentLoaded", function() {
     document.head.appendChild(script);
 });
 </script>
+
+{# ========================================================= #}
+{# SCRIPT INTELIGENTE: DESTAQUE DE VARIAÇÃO EM PROMOÇÃO      #}
+{# ========================================================= #}
+<style>
+.badge-promocao-variacao {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background-color: #e06a6a; /* Mesma cor do teu cashback/pix */
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 5px;
+    border-radius: 10px;
+    z-index: 10;
+    pointer-events: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    border: 1px solid #fff;
+    line-height: 1;
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. Pegamos todos os dados nativos das variações deste produto diretamente da Nuvemshop
+    var productVariants = {{ product.variants_object | json_encode | raw }};
+
+    if (productVariants && productVariants.length > 0) {
+        // 2. Filtramos apenas as variações que estão em promoção (Preço Antigo > Preço Atual)
+        var variantsOnSale = productVariants.filter(function(v) {
+            return v.compare_at_price > v.price;
+        });
+
+        // 3. Se houver variações em promoção, vamos marcá-las na tela
+        if (variantsOnSale.length > 0) {
+            variantsOnSale.forEach(function(variant) {
+                // Pegamos o nome da cor/tamanho (ex: "Pink", "Azul")
+                var options = [variant.option0, variant.option1, variant.option2].filter(Boolean);
+
+                options.forEach(function(optText) {
+                    // 4. Procuramos as miniaturas das cores baseadas nas classes padrão da Nuvemshop
+                    var selectors = [
+                        '[data-option="' + optText + '"]',
+                        '[data-name="' + optText + '"]',
+                        'input[value="' + optText + '"] + label',
+                        'input[data-name="' + optText + '"] + label'
+                    ].join(', ');
+
+                    var targetElements = document.querySelectorAll(selectors);
+
+                    targetElements.forEach(function(elem) {
+                        // Se a etiqueta ainda não foi adicionada a esta cor
+                        if (!elem.querySelector('.badge-promocao-variacao')) {
+                            // Garantimos que a etiqueta flutua corretamente sobre a imagem
+                            elem.style.position = 'relative';
+                            elem.style.overflow = 'visible'; 
+
+                            // Criamos a etiqueta com o símbolo de %
+                            var badge = document.createElement('span');
+                            badge.className = 'badge-promocao-variacao';
+                            badge.innerHTML = '%';
+                            
+                            elem.appendChild(badge);
+                        }
+                    });
+                });
+            });
+        }
+    }
+});
+</script>
