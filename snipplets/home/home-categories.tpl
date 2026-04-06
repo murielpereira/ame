@@ -33,11 +33,11 @@
                     {% endfor %}
                 </div>
             </div>
-            <div class="js-swiper-categories-prev swiper-button-prev swiper-button-outside svg-icon-text d-none d-md-block">
-                <svg class="icon-inline icon-lg icon-flip-horizontal svg-icon-text"><use xlink:href="#chevron"/></svg>
+            <div class="js-swiper-categories-prev swiper-button-prev swiper-button-outside svg-icon-text d-none d-md-block" aria-label="{{ 'Anterior' | translate }}" role="button" tabindex="0">
+                <svg class="icon-inline icon-lg icon-flip-horizontal svg-icon-text" aria-hidden="true"><use xlink:href="#chevron"/></svg>
             </div>
-            <div class="js-swiper-categories-next swiper-button-next swiper-button-outside svg-icon-text d-none d-md-block">
-                <svg class="icon-inline icon-lg svg-icon-text"><use xlink:href="#chevron"/></svg>
+            <div class="js-swiper-categories-next swiper-button-next swiper-button-outside svg-icon-text d-none d-md-block" aria-label="{{ 'Próxima' | translate }}" role="button" tabindex="0">
+                <svg class="icon-inline icon-lg svg-icon-text" aria-hidden="true"><use xlink:href="#chevron"/></svg>
             </div>
         </div>
 

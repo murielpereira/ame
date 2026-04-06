@@ -7,3 +7,7 @@
 **Vulnerability:** Found `jQueryNuvem(...).html()` being used in `static/js/store.js.tpl` which could lead to DOM-based XSS.
 **Learning:** Using `.html()` to set or get content that might contain user-controlled data can lead to Cross-Site Scripting (XSS).
 **Prevention:** Always use `.text()` instead of `.html()` when dealing with user-controlled data or when only text manipulation is needed.
+## 2025-04-04 - [Fix DOM XSS Vulnerability]
+**Vulnerability:** Found `jQuery().html()` being used in `static/js/store.js.tpl` to insert data into the DOM and read values, which opens up the potential for DOM-based Cross-Site Scripting (XSS).
+**Learning:** Even internal formatting values (like formatting totals) or reading values from the DOM can be risky if parsed as HTML instead of text.
+**Prevention:** Always use `jQuery().text()` instead of `.html()` when handling potentially dynamic input data or where HTML parsing is not strictly required.
