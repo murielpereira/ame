@@ -24,10 +24,10 @@
                             {% if slide.link %}
                                         {% set category_handle = slide.link | trim('/') | split('/') | last %}
                                         {% include 'snipplets/home/home-categories-name.tpl' %}
-                                    </div>
-                                </a>
-                            {% else %}
+                            {% endif %}
                                 </div>
+                            {% if slide.link %}
+                                </a>
                             {% endif %}
                         </div>
                     {% endfor %}

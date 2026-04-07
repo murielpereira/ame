@@ -41,8 +41,6 @@
             <div class="js-home-video" id="player"></div>
             {% if settings.video_type == 'autoplay' %}
                 <div class="home-video-hide-controls"></div>
-            {% else %}
-                </div>
             {% endif %}
         </div>
         {% if has_video_text %}
