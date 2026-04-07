@@ -122,7 +122,7 @@ DOMContentLoaded.addEventOrExecute(() => {
             if (limiter) {
                 const name = input.getAttribute('data-name');
                 input.addEventListener('keyup', (e) => {
-                    limiter.innerHTML = input.getAttribute('maxlength') - e.target.value.length;
+                    limiter.textContent = input.getAttribute('maxlength') - e.target.value.length;
                 });
             }
         });
