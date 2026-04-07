@@ -4443,3 +4443,7 @@ h2.carousel-title {
 	height: 19px;
 	display: inline-block;
 }
+/* Fix for slider layout shift before Swiper initialization */
+.swiper-container:not(.swiper-container-initialized) .swiper-slide ~ .swiper-slide {
+    display: none !important;
+}
