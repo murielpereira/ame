@@ -39,7 +39,7 @@
                                     {% else %}
                                         <img
                                             {% if slide.width and slide.height %} width="{{ slide.width }}" height="{{ slide.height }}" {% endif %}
-                                            src="images/empty-placeholder.png"
+                                            src="{{ 'images/empty-placeholder.png' | static_url }}"
                                             data-src="{{ slide.image | static_url | settings_image_url('large') }}"
                                             data-srcset="{{ slide.image | static_url | settings_image_url('large') }} 480w, {{ slide.image | static_url | settings_image_url('huge') }} 640w, {{ slide.image | static_url | settings_image_url('original') }} 1024w, {{ slide.image | static_url | settings_image_url('1080p') }} 1920w"
                                             class="js-slider-image slider-image {% if settings.slider_animation %}slider-image-animation{% endif %} swiper-lazy fade-in"
