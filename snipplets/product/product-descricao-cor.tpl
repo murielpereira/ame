@@ -5,12 +5,15 @@
         var fonteDescricaoCor = document.getElementById('descricao_cor');
         var destinoDescricaoCor = document.getElementById('campo_descricao_cor');
 
-        if (fonteDescricaoCor && destinoDescricaoCor) {
-            if (fonteDescricaoCor.innerHTML.trim() !== "") {
+        if (destinoDescricaoCor) {
+            if (fonteDescricaoCor && fonteDescricaoCor.innerHTML.trim() !== "") {
                 destinoDescricaoCor.innerHTML = fonteDescricaoCor.innerHTML;
             } else {
-                destinoDescricaoCor.style.display = 'none';
+                destinoDescricaoCor.remove();
             }
+        }
+
+        if (fonteDescricaoCor) {
             fonteDescricaoCor.remove();
         }
     });
