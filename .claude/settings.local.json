@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"https://ameacessoriospet.com.br/\")",
+      "Bash(curl -s \"https://ameacessoriospet.com.br//\")",
+      "Bash(curl -s \"https://acdn-us.mitiendanube.com/stores/004/916/830/themes/recife/dart-style-critical-30a9653036b5a0b13b1c18549a5b8583.css\")",
+      "Bash(curl -s \"https://acdn-us.mitiendanube.com/stores/004/916/830/themes/recife/dart-style-async-17d758031937210e11fd3460d3576bef.css\")",
+      "WebFetch(domain:acdn-us.mitiendanube.com)",
+      "WebFetch(domain:ameacessoriospet.com.br)"
+    ]
+  }
+}
