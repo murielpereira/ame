@@ -4443,14 +4443,3 @@ h2.carousel-title {
 	height: 19px;
 	display: inline-block;
 }
-/* Fix for slider layout shift before Swiper initialization */
-.swiper-container:not(.swiper-container-initialized) .swiper-slide ~ .swiper-slide {
-    display: none !important;
-}
-/* Override h-100 on home sliders before Swiper init so the image drives the height,
-   preventing the blank space equal to the banner height caused by h-100 inheriting
-   an incorrect parent height from platform CSS */
-.js-home-slider:not(.swiper-container-initialized),
-.js-home-slider-mobile:not(.swiper-container-initialized) {
-    height: auto !important;
-}

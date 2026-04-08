@@ -91,22 +91,6 @@ lazySizesConfig.hFac = 0.4;
 
 DOMContentLoaded.addEventOrExecute(() => {
 
-    {% if template == 'category' or template == 'search' %}
-        {# Deduplicate products on initial load #}
-        let initSeenIds = new Set();
-        jQueryNuvem('.js-item-product').each(function() {
-            let id = jQueryNuvem(this).attr('data-product-id');
-            if (id) {
-                if (initSeenIds.has(id)) {
-                    jQueryNuvem(this).remove();
-                } else {
-                    initSeenIds.add(id);
-                }
-            }
-        });
-    {% endif %}
-
-
 	{#/*============================================================================
 	  #Notifications and tooltips
 	==============================================================================*/ #}
@@ -122,7 +106,7 @@ DOMContentLoaded.addEventOrExecute(() => {
             if (limiter) {
                 const name = input.getAttribute('data-name');
                 input.addEventListener('keyup', (e) => {
-                    limiter.textContent = input.getAttribute('maxlength') - e.target.value.length;
+                    limiter.innerHTML = input.getAttribute('maxlength') - e.target.value.length;
                 });
             }
         });
@@ -183,20 +167,13 @@ DOMContentLoaded.addEventOrExecute(() => {
             $addedToCartNotification.css("top", fixedNotificationPosition.toString() + 'px').css("marginTop", "-1px");
 
             !function () {
-                var isAtTop = true;
-                // ⚡ Bolt: Added state-tracking and { passive: true } to optimize scroll event
-                // This prevents continuous jQuery DOM manipulations on every single scroll frame
                 window.addEventListener("scroll", function (e) {
-                    var currentAtTop = window.pageYOffset == 0;
-                    if (isAtTop !== currentAtTop) {
-                        isAtTop = currentAtTop;
-                        if (isAtTop) {
-                            $addedToCartNotification.css("top" , fixedNotificationPosition.toString() + 'px');
-                        } else {
-                            $addedToCartNotification.css("top" , "30px");
-                        }
+                    if (window.pageYOffset == 0) {
+                        $addedToCartNotification.css("top" , fixedNotificationPosition.toString() + 'px');
+                    } else {
+                        $addedToCartNotification.css("top" , "30px");
                     }
-                }, { passive: true });
+                });
             }();
         }
 
@@ -304,11 +281,8 @@ DOMContentLoaded.addEventOrExecute(() => {
 
         cleanURLHash = function(){
             const uri = window.location.toString();
-            const hashIndex = uri.indexOf("#");
-            if (hashIndex !== -1) {
-                const clean_uri = uri.substring(0, hashIndex);
-                window.history.replaceState({}, document.title, clean_uri);
-            }
+            const clean_uri = uri.substring(0, uri.indexOf("#"));
+            window.history.replaceState({}, document.title, clean_uri);
         };
 
         {# Go back 1 step on browser history #}
@@ -536,9 +510,9 @@ DOMContentLoaded.addEventOrExecute(() => {
 
     // Attach observer to every [data-transition] element:
     const ELs_inViewport = document.querySelectorAll('[data-transition]');
-    const Obs = new IntersectionObserver(inViewport);
     ELs_inViewport.forEach(EL => {
       EL.observed = false; // Initialize the observed flag for each element
+      const Obs = new IntersectionObserver(inViewport);
       Obs.observe(EL);
     });
 
@@ -688,29 +662,18 @@ DOMContentLoaded.addEventOrExecute(() => {
         menuItems +=  jQueryNuvem(el).first(el => el.offsetWidth);
     });
 
-    // ⚡ Bolt: Added state-tracking and { passive: true } to optimize scroll event
-    // This prevents continuous jQuery DOM manipulations on every single scroll frame
-    document.querySelectorAll('.js-nav-desktop-list').forEach(function(el) {
-        let isNavScrolling = false;
-        el.addEventListener("scroll", function() {
-            if (!isNavScrolling) {
-                window.requestAnimationFrame(function() {
-                    var position = el.scrollLeft;
-                    if(position == 0) {
-                        jQueryNuvem(".js-nav-desktop-list-arrow-left").addClass('disable');
-                    } else {
-                        jQueryNuvem(".js-nav-desktop-list-arrow-left").removeClass('disable');
-                    }
-                    if(position >= ( menuItems - menuContainer - 1 )) {
-                        jQueryNuvem(".js-nav-desktop-list-arrow-right").addClass('disable');
-                    } else {
-                        jQueryNuvem(".js-nav-desktop-list-arrow-right").removeClass('disable');
-                    }
-                    isNavScrolling = false;
-                });
-                isNavScrolling = true;
-            }
-        }, { passive: true });
+    jQueryNuvem(".js-nav-desktop-list").on("scroll", function() {
+        var position = jQueryNuvem('.js-nav-desktop-list').prop("scrollLeft");
+        if(position == 0) {
+            jQueryNuvem(".js-nav-desktop-list-arrow-left").addClass('disable');
+        } else {
+            jQueryNuvem(".js-nav-desktop-list-arrow-left").removeClass('disable');
+        }
+        if(position == ( menuItems - menuContainer )) {
+            jQueryNuvem(".js-nav-desktop-list-arrow-right").addClass('disable');
+        } else {
+            jQueryNuvem(".js-nav-desktop-list-arrow-right").removeClass('disable');
+        }
     });
 
     {% if logo_desktop_left %}
@@ -830,114 +793,50 @@ DOMContentLoaded.addEventOrExecute(() => {
         {% set adbarWithoutMessages = settings.ad_bar and not adbarMessages and adbarImagesOnly %}
 
         var topbarHeight = jQueryNuvem(".js-topbar").outerHeight();
-        var header = jQueryNuvem(".js-head-main");
 
-        if ('IntersectionObserver' in window) {
-            var sentinel = document.createElement('div');
-            sentinel.style.position = 'absolute';
-            sentinel.style.top = '0';
-            sentinel.style.left = '0';
-            sentinel.style.width = '1px';
-            sentinel.style.visibility = 'hidden';
-            sentinel.style.pointerEvents = 'none';
-            // Set height to initial navbarHeight
-            var initialNavbarHeight = header.outerHeight() || 100;
-            sentinel.style.height = initialNavbarHeight + 'px';
-            document.body.appendChild(sentinel);
+        window.addEventListener("scroll", function() {
 
-            var headerObserver = new IntersectionObserver(function(entries) {
-                entries.forEach(function(entry) {
-                    {# Recalculate topbar height in case image has not loaded yet and result is 0 #}
-                    {% if adbarWithoutMessages %}
-                        {% if adbarImageMobileOnly %}
-                            if (window.innerWidth < 768) {
-                        {% elseif adbarImageDesktopOnly %}
-                            if (window.innerWidth > 768) {
-                        {% endif %}
-                                if (topbarHeight == 0) {
-                                    topbarHeight = jQueryNuvem(".js-topbar").outerHeight();
-                                }
-                        {% if adbarImageMobileOnly or adbarImageDesktopOnly %}
-                            }
-                        {% endif %}
-                    {% endif %}
+            var scrolledPosition = window.pageYOffset;
 
-                    if (!entry.isIntersecting) {
-                        header.addClass('compress').css('top', -topbarHeight + 'px' );
-                        {% if template == 'category' %}
-                            if (window.innerWidth < 768) {
-                                setTimeout(function(){
-                                    if(typeof offsetCategories === 'function') offsetCategories();
-                                },300);
-                            }
-                        {% endif %}
-                    } else {
-                        header.removeClass('compress').css("top", "0px");
-                        {% if template == 'category' %}
-                            if (window.innerWidth < 768) {
-                                setTimeout(function(){
-                                    if(typeof offsetCategories === 'function') offsetCategories();
-                                },300);
-                            }
-                        {% endif %}
+            var header = jQueryNuvem(".js-head-main");
+            var navbarHeight = header.outerHeight();
+
+            {# Recalculate topbar height in case image has not loaded yet and result is 0 #}
+
+            {% if adbarWithoutMessages %}
+                {% if adbarImageMobileOnly %}
+                    if (window.innerWidth < 768) {
+                {% elseif adbarImageDesktopOnly %}
+                    if (window.innerWidth > 768) {
+                {% endif %}
+                        if (topbarHeight == 0) {
+                            topbarHeight = jQueryNuvem(".js-topbar").outerHeight();
+                        }
+                {% if adbarImageMobileOnly or adbarImageDesktopOnly %}
                     }
-                });
-            }, { threshold: 0 });
+                {% endif %}
+            {% endif %}
 
-            headerObserver.observe(sentinel);
-
-            // Re-evaluate on resize
-            window.addEventListener('resize', function() {
-                sentinel.style.height = header.outerHeight() + 'px';
-            });
-        } else {
-            // Fallback for older browsers
-            var scrollTimeout;
-            window.addEventListener("scroll", function() {
-                if (scrollTimeout) {
-                    window.cancelAnimationFrame(scrollTimeout);
-                }
-                scrollTimeout = window.requestAnimationFrame(function() {
-                    var scrolledPosition = window.pageYOffset;
-                    var navbarHeight = header.outerHeight();
-
-                    {# Recalculate topbar height in case image has not loaded yet and result is 0 #}
-                    {% if adbarWithoutMessages %}
-                        {% if adbarImageMobileOnly %}
-                            if (window.innerWidth < 768) {
-                        {% elseif adbarImageDesktopOnly %}
-                            if (window.innerWidth > 768) {
-                        {% endif %}
-                                if (topbarHeight == 0) {
-                                    topbarHeight = jQueryNuvem(".js-topbar").outerHeight();
-                                }
-                        {% if adbarImageMobileOnly or adbarImageDesktopOnly %}
-                            }
-                        {% endif %}
-                    {% endif %}
-
-                    if (scrolledPosition > navbarHeight) {
-                        header.addClass('compress').css('top', -topbarHeight + 'px' );
-                        {% if template == 'category' %}
-                            if (window.innerWidth < 768) {
-                                setTimeout(function(){
-                                    if(typeof offsetCategories === 'function') offsetCategories();
-                                },300);
-                            }
-                        {% endif %}
-                    } else {
-                        header.removeClass('compress').css("top", "0px");
-                        {% if template == 'category' %}
-                            if (window.innerWidth < 768) {
-                                setTimeout(function(){
-                                    if(typeof offsetCategories === 'function') offsetCategories();
-                                },300);
-                            }
-                        {% endif %}
+            if (scrolledPosition > navbarHeight) {
+                header.addClass('compress').css('top', -topbarHeight + 'px' );
+                {% if template == 'category' %}
+                    if (window.innerWidth < 768) {
+                        setTimeout(function(){
+                            offsetCategories();
+                        },300);
                     }
-                });
-            }, { passive: true });
-        }
+                {% endif %}
+            } else {
+                header.removeClass('compress').css("top", "0px");
+                {% if template == 'category' %}
+                    if (window.innerWidth < 768) {
+                        setTimeout(function(){
+                            offsetCategories();
+                        },300);
+                    }
+                {% endif %}
+            }
+        });
         
     {% if has_only_mobile_with_fixed_nav %}
         }
@@ -1039,9 +938,21 @@ DOMContentLoaded.addEventOrExecute(() => {
 
 	{% if template == 'home' %}
 
-            // aqui vamos fazer esquema de lazy usando IntersectionObserver para melhor performance
+            // aqui vamos fazer esquema de lazy, quand o elemento estiver chegando a ficar visivel na tela então damos display block e trocamos data-src para src.
             
             setTimeout(function() {
+                // Função auxiliar para verificar se o elemento está visível na viewport (com margem de 200px)
+                function isElementInViewport(el) {
+                    const rect = el.getBoundingClientRect();
+                    const margin = 200; // Margem para carregar antes de ficar visível
+                    return (
+                        rect.top <= (window.innerHeight + margin) &&
+                        rect.bottom >= -margin &&
+                        rect.left <= (window.innerWidth + margin) &&
+                        rect.right >= -margin
+                    );
+                }
+
                 // Função para carregar imagens primeiro
                 function loadImages(element) {
                     const imgs = element.querySelectorAll("img");
@@ -1076,18 +987,10 @@ DOMContentLoaded.addEventOrExecute(() => {
                     });
                 }
 
-                // Configurar o IntersectionObserver
-                const observerOptions = {
-                    root: null, // viewport
-                    rootMargin: '200px', // Carregar antes de ficar visível, equivalente ao margin anterior
-                    threshold: 0
-                };
-
-                const lazyElementObserver = new IntersectionObserver(function(entries, observer) {
-                    entries.forEach(function(entry) {
-                        if (entry.isIntersecting) {
-                            const element = entry.target;
-
+                // Função para carregar elementos lazy quando ficarem visíveis
+                function loadLazyElements() {
+                    document.querySelectorAll(".js-section-video-products-lazy:not(.js-section-video-products-lazy-loaded)").forEach(function(element) {    
+                        if (isElementInViewport(element)) {
                             element.style.display = "block";
                             
                             // Carrega imagens primeiro
@@ -1099,16 +1002,26 @@ DOMContentLoaded.addEventOrExecute(() => {
                             }, 300);
                             
                             element.classList.add("js-section-video-products-lazy-loaded");
-
-                            // Parar de observar o elemento depois de carregado
-                            observer.unobserve(element);
                         }
                     });
-                }, observerOptions);
+                }
 
-                // Observar todos os elementos lazy
-                document.querySelectorAll(".js-section-video-products-lazy:not(.js-section-video-products-lazy-loaded)").forEach(function(element) {
-                    lazyElementObserver.observe(element);
+                // Executar na primeira vez
+                loadLazyElements();
+
+                // Adicionar listener de scroll com throttling para performance
+                let scrollTimeout;
+                window.addEventListener('scroll', function() {
+                    if (scrollTimeout) return;
+                    scrollTimeout = setTimeout(function() {
+                        loadLazyElements();
+                        scrollTimeout = null;
+                    }, 50); // Throttle reduzido para 50ms
+                });
+
+                // Também executar quando a janela for redimensionada
+                window.addEventListener('resize', function() {
+                    loadLazyElements();
                 });
             }, 100); // Reduzido de 1000ms para 100ms
 
@@ -2049,50 +1962,35 @@ DOMContentLoaded.addEventOrExecute(() => {
                 });
                 observer.observe(document.querySelector(".js-category-controls-prev"));
 
-                var $sticky_category_controls = jQueryNuvem(".js-category-controls");
-                var $head_main = jQueryNuvem(".js-head-main");
-                var categoriesOffset = 0;
-                var isCategoriesOffsetTicking = false;
-
                 offsetCategories = function() {
-                    categoriesOffset = $head_main.outerHeight();
+                    var $sticky_category_controls = jQueryNuvem(".js-category-controls");
 
-                    if($head_main.hasClass("compress")){
-                        categoriesOffset = categoriesOffset - topbarHeight - 1;
+                    var categoriesOffset = jQueryNuvem(".js-head-main").outerHeight();
+
+                    if(jQueryNuvem(".js-head-main").hasClass("compress")){
+                        var categoriesOffset = categoriesOffset - topbarHeight - 1;
                     }
 
-                    $sticky_category_controls.css('top', categoriesOffset.toString() + 'px' );
+                    $sticky_category_controls.css('top', (categoriesOffset).toString() + 'px' );
                 };
 
                 offsetCategories();
 
                 document.addEventListener("scroll", function(){
-                    if (!isCategoriesOffsetTicking) {
-                        window.requestAnimationFrame(function() {
-                            offsetCategories();
-                            isCategoriesOffsetTicking = false;
-                        });
-                        isCategoriesOffsetTicking = true;
-                    }
-                }, { passive: true });
+                    offsetCategories();
+                });
 
             }
 
         {# /* // Filters */ #}
 
         {% if has_applied_filters %}
-            document.querySelectorAll('.js-filter-container').forEach(function(el) {
-                const activeCount = el.querySelectorAll('.js-filter-checkbox [type=checkbox]:checked').length;
-                const badge = el.querySelector('.js-filters-badge');
-                if (badge && activeCount > 0) {
-                    badge.textContent = activeCount;
-                    badge.style.display = '';
-                }
+            jQueryNuvem('.js-filter-container').each(function(el) {
+                const filterActive = jQueryNuvem(el).find(".js-filter-checkbox [type=checkbox]:checked");
+                filterActive.closest(".js-filter-container").find(".js-filters-badge").text(filterActive.length).show();
             });
-            const appliedFilters = document.querySelectorAll('#nav-filters .js-remove-filter-chip').length;
-            document.querySelectorAll('.js-filters-total-badge').forEach(function(badge) {
-                badge.textContent = appliedFilters;
-            });
+            const applied_filters = jQueryNuvem("#nav-filters .js-remove-filter-chip").length;
+            jQueryNuvem(".js-filters-total-badge").text(applied_filters);
         {% endif %}
 
 		{# /* // Sort by */ #}
@@ -2161,19 +2059,6 @@ DOMContentLoaded.addEventOrExecute(() => {
                     productsPerPage: products_per_page_value,
                     afterLoaded: function(){
                         jQueryNuvem('.js-item-product').addClass('is-inViewport');
-
-                        {# Deduplicate products loaded via infinite scroll #}
-                        let seenIds = new Set();
-                        jQueryNuvem('.js-item-product').each(function() {
-                            let id = jQueryNuvem(this).attr('data-product-id');
-                            if (id) {
-                                if (seenIds.has(id)) {
-                                    jQueryNuvem(this).remove();
-                                } else {
-                                    seenIds.add(id);
-                                }
-                            }
-                        });
                     },
                 });
             {% endif %}
@@ -2307,7 +2192,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                 return el.value == option_id;
             });
             selected_option.prop('selected', true).trigger('change');
-            parent.find('.js-insta-variation-label').text(option_id);
+            parent.find('.js-insta-variation-label').html(option_id);
         }
 
         {% if settings.bullet_variants or settings.image_color_variants %}
@@ -2403,11 +2288,10 @@ DOMContentLoaded.addEventOrExecute(() => {
         {# Shows/hides price with discount and strikethrough original price for every payment method #}
 
         function togglePaymentDiscounts(variant){
-            jQueryNuvem(".js-payment-method-total").each(function(){
-                const $this = jQueryNuvem(this);
-                const priceComparerElement = $this.find(".js-compare-price-display");
-                const installmentsOnePaymentElement = $this.find('.js-installments-no-discount');
-                const priceWithDiscountElement = $this.find('.js-price-with-discount');
+            jQueryNuvem(".js-payment-method-total").each(function( paymentMethodTotalElement ){
+                const priceComparerElement = jQueryNuvem(paymentMethodTotalElement).find(".js-compare-price-display");
+                const installmentsOnePaymentElement = jQueryNuvem(paymentMethodTotalElement).find('.js-installments-no-discount');
+                const priceWithDiscountElement = jQueryNuvem(paymentMethodTotalElement).find('.js-price-with-discount');
 
                 priceComparerElement.hide();
                 installmentsOnePaymentElement.hide();
@@ -2469,24 +2353,20 @@ DOMContentLoaded.addEventOrExecute(() => {
             jQueryNuvem(".js-info-payment-method-container").each(function(infoPaymentMethodElement){
                 {# For each payment method this will show the payment method discount and discount explanation #}
 
-                const infoPaymentMethod = jQueryNuvem(infoPaymentMethodElement);
-                const discountExplanation = infoPaymentMethod.find(".js-discount-explanation");
-                const discountDisclaimer = infoPaymentMethod.find(".js-discount-disclaimer");
-                const paymentMethodDiscount = infoPaymentMethod.find(".js-payment-method-discount");
-
-                discountExplanation.hide();
-                discountDisclaimer.hide();
+                const infoPaymentMethod = jQueryNuvem(infoPaymentMethodElement)
+                infoPaymentMethod.find(".js-discount-explanation").hide();
+                infoPaymentMethod.find(".js-discount-disclaimer").hide();
 
                 const priceWithDiscountElement = infoPaymentMethod.find('.js-price-with-discount');
                 const discount = priceWithDiscountElement.data('paymentDiscount');
 
                 if (discount > 0 && showMaxPaymentDiscount(variant)){
-                    discountExplanation.show();
-                    paymentMethodDiscount.show();
+                    infoPaymentMethod.find(".js-discount-explanation").show();
+                    infoPaymentMethod.find(".js-payment-method-discount").show();
                 }
 
                 if (discount > 0 && showMaxPaymentDiscountNotCombinableDisclaimer(variant)){
-                    discountDisclaimer.show();
+                    infoPaymentMethod.find(".js-discount-disclaimer").show();
                 }
             })
         }
@@ -2773,8 +2653,8 @@ DOMContentLoaded.addEventOrExecute(() => {
         var current_percentage_value = $this_product_container.find(".js-offer-percentage");
 
         // Get the current product price and promotional price
-        var compare_price_value = $this_compare_price.text();
-        var price_value = $this_price.text();
+        var compare_price_value = $this_compare_price.html();
+        var price_value = $this_price.html();
 
         // Calculate new discount percentage based on difference between filtered old and new prices
         const percentageDifference = window.moneyDifferenceCalculator.percentageDifferenceFromString(compare_price_value, price_value);
@@ -2876,6 +2756,7 @@ DOMContentLoaded.addEventOrExecute(() => {
             var width = window.innerWidth;
 
             var productSwiper = null;
+            console.log(`Mudou js - criou`);
             
             createSwiper(
                 '.js-swiper-product', {
@@ -3434,7 +3315,7 @@ DOMContentLoaded.addEventOrExecute(() => {
             jQueryNuvem("#cart-shipping-container").closest(".js-shipping-calculator-container") );
         }
 
-        jQueryNuvem(".js-shipping-calculator-current-zip").text(shipping_input_val);
+        jQueryNuvem(".js-shipping-calculator-current-zip").html(shipping_input_val);
         removeShippingSuboptions();
 	});
 
@@ -3466,7 +3347,7 @@ DOMContentLoaded.addEventOrExecute(() => {
         LS.addToTotal(shippingPrice);
 
         let total = (LS.data.cart.total / 100) + parseFloat(shippingPrice);
-        jQueryNuvem(".js-cart-widget-total").text(LS.formatToCurrency(total));
+        jQueryNuvem(".js-cart-widget-total").html(LS.formatToCurrency(total));
 
         selectShippingOption(this, false);
     });
@@ -3570,12 +3451,12 @@ DOMContentLoaded.addEventOrExecute(() => {
         jQueryNuvem(".lb-input-container input[type='text'], .lb-input-container textarea").on('focus', function() {
             var viewport = document.querySelector('meta[name=viewport]');
             if (viewport) {
-                viewport.setAttribute('content', 'width=device-width, initial-scale=1');
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
             }
         }).on('blur', function() {
             var viewport = document.querySelector('meta[name=viewport]');
             if (viewport) {
-                viewport.setAttribute('content', 'width=device-width, initial-scale=1');
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
             }
         });
     }
@@ -3603,29 +3484,26 @@ DOMContentLoaded.addEventOrExecute(() => {
 
         // Função para inicializar a barra de progresso do vídeo
         function initVideoProgress(video) {
-        const progressFill = video.parentElement.querySelector('.video-progress-fill');
-
-        if (!progressFill) return;
-
-        // Reset da barra de progresso
-        progressFill.style.width = '0%';
-
-        if (video.dataset.progressInitialized) return;
-        video.dataset.progressInitialized = "true";
-
-        // Atualizar progresso durante a reprodução
-        video.addEventListener('timeupdate', function() {
-            if (video.duration > 0) {
-                const progress = (video.currentTime / video.duration) * 100;
-                progressFill.style.width = progress + '%';
-            }
-        });
-
-        // Reset quando o vídeo termina (devido ao loop)
-        video.addEventListener('ended', function() {
+            const progressFill = video.parentElement.querySelector('.video-progress-fill');
+            
+            if (!progressFill) return;
+            
+            // Reset da barra de progresso
             progressFill.style.width = '0%';
-        });
-    }
+            
+            // Atualizar progresso durante a reprodução
+            video.addEventListener('timeupdate', function() {
+                if (video.duration > 0) {
+                    const progress = (video.currentTime / video.duration) * 100;
+                    progressFill.style.width = progress + '%';
+                }
+            });
+            
+            // Reset quando o vídeo termina (devido ao loop)
+            video.addEventListener('ended', function() {
+                progressFill.style.width = '0%';
+            });
+        }
 
         {# /* // Home showcase videos */ #}
 
@@ -3732,23 +3610,13 @@ DOMContentLoaded.addEventOrExecute(() => {
             },
             on: {
                 init: function () {
-                    const swiperInstance = this;
-                    // Cache DOM elements
-                    swiperInstance.allVideos = swiperInstance.el.querySelectorAll('video');
-
                     // Aguardar um pouco para garantir que o DOM esteja pronto
-                    const self = this;
                     setTimeout(function() {
                         // No mobile, carregar os 2 vídeos visíveis inicialmente
                         if (window.innerWidth <= 767) {
-                            const activeSlide = swiperInstance.slides[swiperInstance.activeIndex];
-                            const nextSlide = swiperInstance.slides[swiperInstance.activeIndex + 1];
-                            const visibleSlides = [];
-                            if (activeSlide) visibleSlides.push(activeSlide);
-                            if (nextSlide) visibleSlides.push(nextSlide);
+                            const visibleSlides = document.querySelectorAll('.js-section-video-products .swiper-slide.swiper-slide-active, .js-section-video-products .swiper-slide.swiper-slide-next');
                             
                             visibleSlides.forEach(function(slide, index) {
-                                if (!slide) return;
                                 const video = slide.querySelector('.lb-showcase-video-item-video-video-wrapper video');
                                 if (video) {
                                     // Carregar o vídeo (sem dar play)
@@ -3764,7 +3632,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                             });
                         } else {
                             // No desktop, comportamento original
-                            const itemActive = self.slides[self.activeIndex];
+                            const itemActive = document.querySelector('.js-section-video-products .swiper-slide.swiper-slide-active');
                             if (itemActive) {
                                 const video = itemActive.querySelector('.lb-showcase-video-item-video-video-wrapper video');
                                 if (video) {
@@ -3777,14 +3645,12 @@ DOMContentLoaded.addEventOrExecute(() => {
                     }, 100);
                 },
                 slideChangeTransitionEnd: function () {
-                    const swiperInstance = this;
-                    if (swiperInstance.allVideos) {
-                        swiperInstance.allVideos.forEach(function(video) {
-                            video.pause();
-                        });
-                    }
+                    var allVideos = document.querySelectorAll('.js-section-video-products .swiper-slide video');
+                    allVideos.forEach(function(video) {
+                        video.pause();
+                    });
 
-                    const itemActive = swiperInstance.slides[swiperInstance.activeIndex];
+                    const itemActive = document.querySelector('.js-section-video-products .swiper-slide.swiper-slide-active');
 
                     if( itemActive ) {
                         const video = itemActive.querySelector('.lb-showcase-video-item-video-video-wrapper video');
@@ -3796,17 +3662,15 @@ DOMContentLoaded.addEventOrExecute(() => {
                     }
                 },
                 slideChange: function () {
-                    const swiperInstance = this;
                     // aqui vamos pausar todos os videos primeiro
-                    if (swiperInstance.allVideos) {
-                        swiperInstance.allVideos.forEach(function(video) {
-                            video.pause();
-                        });
-                    }
+                    var allVideos = document.querySelectorAll('.js-section-video-products .swiper-slide video');
+                    allVideos.forEach(function(video) {
+                        video.pause();
+                    });
 
                     // No mobile, pré-carregar o próximo vídeo se existir
                     if (window.innerWidth <= 767) {
-                        const nextSlide = swiperInstance.slides[swiperInstance.activeIndex + 1];
+                        const nextSlide = document.querySelector('.js-section-video-products .swiper-slide.swiper-slide-next');
                         if (nextSlide) {
                             const nextVideo = nextSlide.querySelector('.lb-showcase-video-item-video-video-wrapper video');
                             if (nextVideo && nextVideo.readyState < 2) { // Se não estiver carregado
@@ -3815,7 +3679,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                         }
                     }
 
-                    const itemActive = swiperInstance.slides[swiperInstance.activeIndex];
+                    const itemActive = document.querySelector('.js-section-video-products .swiper-slide.swiper-slide-active');
 
                     if( itemActive ) {
                         const video = itemActive.querySelector('.lb-showcase-video-item-video-video-wrapper video');
@@ -3845,34 +3709,22 @@ DOMContentLoaded.addEventOrExecute(() => {
                     },
                     on: {
                         init: function() {
-                            const self = this;
-                            self.allVideos = Array.from(document.querySelectorAll('.js-section-video-products-modal .swiper-slide video'));
                             console.log('Modal Swiper inicializado');
-                            // Cache DOM elements
-                            this.allVideos = this.el.querySelectorAll('video');
                             // Armazenar a referência da instância
                             window.modalSwiperInstance = this;
-                            // ⚡ Bolt: Cache all videos on init to avoid repetitive DOM queries
-                            this.allVideos = Array.from(this.el.querySelectorAll('.swiper-slide video'));
                         },
                         slideChange: function () {
-                            const self = this;
-                            console.log('Slide do modal mudou para:', self.activeIndex);
+                            console.log('Slide do modal mudou para:', this.activeIndex);
                             
                             // Pausar todos os vídeos do modal
-                            if (this.allVideos) {
-                                this.allVideos.forEach(function(video) {
-                                    video.pause();
-                                });
-                            }
+                            var allModalVideos = document.querySelectorAll('.js-section-video-products-modal .swiper-slide video');
+                            allModalVideos.forEach(function(video) {
+                                video.pause();
+                            });
                             
                             // Dar play no vídeo do slide ativo
-                            const self = this;
                             setTimeout(function() {
-                                const activeSlide = this.slides[this.activeIndex];
-                                if (!activeSlide) return;
-
-                                const activeModalVideo = activeSlide.querySelector('video');
+                                const activeModalVideo = document.querySelector('.js-section-video-products-modal .swiper-slide-active video');
                                 console.log('Vídeo ativo encontrado no slideChange:', activeModalVideo);
                                 if (activeModalVideo) {
                                     // Verificar se o vídeo tem data-src, senão usar o src original
@@ -3881,16 +3733,16 @@ DOMContentLoaded.addEventOrExecute(() => {
                                         activeModalVideo.setAttribute('src', videoSrc);
                                         activeModalVideo.play().then(function() {
                                             console.log('Vídeo do slide', this.activeIndex, 'iniciado com sucesso');
-                                        }.bind(this)).catch(function(error) {
+                                        }).catch(function(error) {
                                             console.log('Erro ao dar play no vídeo do slide', this.activeIndex, ':', error);
-                                        }.bind(this));
+                                        });
                                     } else {
                                         console.log('URL do vídeo inválida:', videoSrc);
                                     }
                                 } else {
-                                    console.log('Vídeo ativo não encontrado no slide', self.activeIndex);
+                                    console.log('Vídeo ativo não encontrado no slide', this.activeIndex);
                                 }
-                            }.bind(this), 300);
+                            }, 300);
                         }
                     }
                 });
@@ -4088,73 +3940,41 @@ DOMContentLoaded.addEventOrExecute(() => {
 
         // Product image sticky control - Mobile only
         function handleProductImageSticky() {
+            // Only execute on mobile devices
+            if (window.innerWidth >= 768) return;
+            
             const priceElement = document.querySelector(`[data-store="product-price-${LS.product.id}"]`);
             const stickyElement = document.querySelector('.lb-product-image-container-sticky');
             
             if (!priceElement || !stickyElement) return;
             
-            if ('IntersectionObserver' in window) {
-                const observerOptions = {
-                    root: null,
-                    rootMargin: '0px',
-                    threshold: 0
-                };
-
-                const stickyObserver = new IntersectionObserver(function(entries) {
-                    entries.forEach(function(entry) {
-                        if (window.innerWidth >= 768) return;
-
-                        // If price element is completely off screen above (scrolled past it)
-                        // Its bounding client rect bottom will be < 0.
-                        // However, IntersectionObserver only tells us it's intersecting or not.
-                        // We can use boundingClientRect.bottom from the entry to know direction if not intersecting.
-                        if (!entry.isIntersecting && entry.boundingClientRect.bottom < 0) {
-                            stickyElement.classList.remove('active');
-                        } else {
-                            stickyElement.classList.add('active');
-                        }
-                    });
-                }, observerOptions);
-
-                stickyObserver.observe(priceElement);
-
-                // Re-evaluate on resize
-                window.addEventListener('resize', function() {
-                    if (window.innerWidth >= 768) {
-                        stickyElement.classList.remove('active');
-                    }
-                });
+            const priceRect = priceElement.getBoundingClientRect();
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // If price element passed completely off screen (scroll down)
+            if (priceRect.bottom < 0) {
+                stickyElement.classList.remove('active');
             } else {
-                // Fallback for older browsers
-                const updateStickyState = function() {
-                    if (window.innerWidth >= 768) {
-                        stickyElement.classList.remove('active');
-                        return;
-                    }
-                    const priceRect = priceElement.getBoundingClientRect();
-                    if (priceRect.bottom < 0) {
-                        stickyElement.classList.remove('active');
-                    } else {
-                        stickyElement.classList.add('active');
-                    }
-                };
-
-                let scrollTimeout;
-                window.addEventListener('scroll', function() {
-                    if (scrollTimeout) return;
-                    scrollTimeout = setTimeout(function() {
-                        updateStickyState();
-                        scrollTimeout = null;
-                    }, 10);
-                }, { passive: true });
-
-                window.addEventListener('resize', updateStickyState);
-                updateStickyState();
+                // If price element came back to screen (scroll up)
+                stickyElement.classList.add('active');
             }
         }
         
         // Execute on initialization
         handleProductImageSticky();
+        
+        // Execute on scroll with throttling for better performance
+        let scrollTimeout;
+        window.addEventListener('scroll', function() {
+            if (scrollTimeout) return;
+            scrollTimeout = setTimeout(function() {
+                handleProductImageSticky();
+                scrollTimeout = null;
+            }, 10);
+        });
+        
+        // Execute on window resize
+        window.addEventListener('resize', handleProductImageSticky);
     {% endif %}
 
     // Função para inicializar a barra de progresso do vídeo
@@ -4166,9 +3986,6 @@ DOMContentLoaded.addEventOrExecute(() => {
         // Reset da barra de progresso
         progressFill.style.width = '0%';
         
-        if (video.dataset.progressInitialized) return;
-        video.dataset.progressInitialized = "true";
-
         // Atualizar progresso durante a reprodução
         video.addEventListener('timeupdate', function() {
             if (video.duration > 0) {
