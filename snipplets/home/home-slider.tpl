@@ -3,6 +3,23 @@
 {% set slider_align = settings.slider_align %}
 {% set slider_animation = settings.slider_animation ? 'true' : 'false' %}
 
+{# --- INÍCIO DA CORREÇÃO DO ESPAÇO EM BRANCO --- #}
+<style>
+    /* Esconde todos os slides (exceto o 1º) antes do script do carrossel inicializar */
+    .js-home-slider:not(.swiper-container-initialized):not(.swiper-initialized) .swiper-slide:nth-child(n+2),
+    .js-home-slider-mobile:not(.swiper-container-initialized):not(.swiper-initialized) .swiper-slide:nth-child(n+2) {
+        display: none !important;
+    }
+    /* Mantém os banners alinhados em linha sem quebrar para baixo antes do JS agir */
+    .js-home-slider:not(.swiper-container-initialized):not(.swiper-initialized) .swiper-wrapper,
+    .js-home-slider-mobile:not(.swiper-container-initialized):not(.swiper-initialized) .swiper-wrapper {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: flex-start;
+    }
+</style>
+{# --- FIM DA CORREÇÃO --- #}
+
 {% if not mobile %}
 <div class="js-home-main-slider-container {% if not has_main_slider and not params.preview %}hidden{% endif %}">
 {% endif %}
