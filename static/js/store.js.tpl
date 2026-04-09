@@ -941,18 +941,6 @@ DOMContentLoaded.addEventOrExecute(() => {
             // aqui vamos fazer esquema de lazy, quand o elemento estiver chegando a ficar visivel na tela então damos display block e trocamos data-src para src.
             
             setTimeout(function() {
-                // Função auxiliar para verificar se o elemento está visível na viewport (com margem de 200px)
-                function isElementInViewport(el) {
-                    const rect = el.getBoundingClientRect();
-                    const margin = 200; // Margem para carregar antes de ficar visível
-                    return (
-                        rect.top <= (window.innerHeight + margin) &&
-                        rect.bottom >= -margin &&
-                        rect.left <= (window.innerWidth + margin) &&
-                        rect.right >= -margin
-                    );
-                }
-
                 // Função para carregar imagens primeiro
                 function loadImages(element) {
                     const imgs = element.querySelectorAll("img");
@@ -987,42 +975,40 @@ DOMContentLoaded.addEventOrExecute(() => {
                     });
                 }
 
-                // Função para carregar elementos lazy quando ficarem visíveis
-                function loadLazyElements() {
-                    document.querySelectorAll(".js-section-video-products-lazy:not(.js-section-video-products-lazy-loaded)").forEach(function(element) {    
-                        if (isElementInViewport(element)) {
-                            element.style.display = "block";
-                            
-                            // Carrega imagens primeiro
-                            loadImages(element);
-                            
-                            // Carrega vídeos depois de um pequeno delay
-                            setTimeout(() => {
-                                loadVideos(element);
-                            }, 300);
-                            
-                            element.classList.add("js-section-video-products-lazy-loaded");
-                        }
+                // Intersection Observer for better performance lazy loading
+                if ('IntersectionObserver' in window) {
+                    const lazyObserver = new IntersectionObserver((entries, observer) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                const element = entry.target;
+                                element.style.display = "block";
+
+                                // Carrega imagens primeiro
+                                loadImages(element);
+
+                                // Carrega vídeos depois de um pequeno delay
+                                setTimeout(() => {
+                                    loadVideos(element);
+                                }, 300);
+
+                                element.classList.add("js-section-video-products-lazy-loaded");
+                                observer.unobserve(element);
+                            }
+                        });
+                    }, { rootMargin: "200px" });
+
+                    document.querySelectorAll(".js-section-video-products-lazy:not(.js-section-video-products-lazy-loaded)").forEach(function(element) {
+                        lazyObserver.observe(element);
+                    });
+                } else {
+                    // Fallback para navegadores antigos sem suporte a IntersectionObserver
+                    document.querySelectorAll(".js-section-video-products-lazy:not(.js-section-video-products-lazy-loaded)").forEach(function(element) {
+                        element.style.display = "block";
+                        loadImages(element);
+                        setTimeout(() => loadVideos(element), 300);
+                        element.classList.add("js-section-video-products-lazy-loaded");
                     });
                 }
-
-                // Executar na primeira vez
-                loadLazyElements();
-
-                // Adicionar listener de scroll com throttling para performance
-                let scrollTimeout;
-                window.addEventListener('scroll', function() {
-                    if (scrollTimeout) return;
-                    scrollTimeout = setTimeout(function() {
-                        loadLazyElements();
-                        scrollTimeout = null;
-                    }, 50); // Throttle reduzido para 50ms
-                });
-
-                // Também executar quando a janela for redimensionada
-                window.addEventListener('resize', function() {
-                    loadLazyElements();
-                });
             }, 100); // Reduzido de 1000ms para 100ms
 
 		{# /* // Home slider */ #}
@@ -3939,42 +3925,83 @@ DOMContentLoaded.addEventOrExecute(() => {
         });
 
         // Product image sticky control - Mobile only
-        function handleProductImageSticky() {
-            // Only execute on mobile devices
+        // Replace scroll listener + getBoundingClientRect with IntersectionObserver for better performance
+        let productImageStickyObserver = null;
+        let productImageStickyScrollListener = null;
+
+        function initProductImageSticky() {
             if (window.innerWidth >= 768) return;
             
             const priceElement = document.querySelector(`[data-store="product-price-${LS.product.id}"]`);
             const stickyElement = document.querySelector('.lb-product-image-container-sticky');
             
             if (!priceElement || !stickyElement) return;
+
+            // Disconnect old observer if it exists
+            if (productImageStickyObserver) {
+                productImageStickyObserver.disconnect();
+                productImageStickyObserver = null;
+            }
             
-            const priceRect = priceElement.getBoundingClientRect();
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
-            // If price element passed completely off screen (scroll down)
-            if (priceRect.bottom < 0) {
-                stickyElement.classList.remove('active');
+            if ('IntersectionObserver' in window) {
+                productImageStickyObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        // If price element is intersecting (visible), don't show sticky
+                        // If price element is not intersecting and is above viewport (boundingClientRect.top < 0), show sticky
+                        if (entry.isIntersecting) {
+                            stickyElement.classList.add('active');
+                        } else {
+                            if (entry.boundingClientRect.top < 0) {
+                                stickyElement.classList.remove('active');
+                            } else {
+                                stickyElement.classList.add('active');
+                            }
+                        }
+                    });
+                }, {
+                    // Start checking when it's fully out of view
+                    threshold: 0
+                });
+
+                productImageStickyObserver.observe(priceElement);
             } else {
-                // If price element came back to screen (scroll up)
-                stickyElement.classList.add('active');
+                // Fallback for older browsers
+                function handleProductImageStickyFallback() {
+                    if (window.innerWidth >= 768) return;
+                    const priceRect = priceElement.getBoundingClientRect();
+                    if (priceRect.bottom < 0) {
+                        stickyElement.classList.remove('active');
+                    } else {
+                        stickyElement.classList.add('active');
+                    }
+                }
+
+                handleProductImageStickyFallback();
+                if (!productImageStickyScrollListener) {
+                    let scrollTimeout;
+                    productImageStickyScrollListener = function() {
+                        if (scrollTimeout) return;
+                        scrollTimeout = setTimeout(function() {
+                            handleProductImageStickyFallback();
+                            scrollTimeout = null;
+                        }, 50);
+                    };
+                    window.addEventListener('scroll', productImageStickyScrollListener, { passive: true });
+                }
             }
         }
         
-        // Execute on initialization
-        handleProductImageSticky();
+        initProductImageSticky();
         
-        // Execute on scroll with throttling for better performance
-        let scrollTimeout;
-        window.addEventListener('scroll', function() {
-            if (scrollTimeout) return;
-            scrollTimeout = setTimeout(function() {
-                handleProductImageSticky();
-                scrollTimeout = null;
-            }, 10);
+        // Handle resize re-initialization
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            if (resizeTimeout) return;
+            resizeTimeout = setTimeout(function() {
+                initProductImageSticky();
+                resizeTimeout = null;
+            }, 100);
         });
-        
-        // Execute on window resize
-        window.addEventListener('resize', handleProductImageSticky);
     {% endif %}
 
     // Função para inicializar a barra de progresso do vídeo
