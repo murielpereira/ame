@@ -11,3 +11,6 @@
 ## 2025-04-03 - Use local HTML stubs for Playwright testing of Twig templates
 **Learning:** Playwright cannot directly render `.tpl` files containing Twig tags (like `{{ 'Text' | translate }}`), as the uncompiled template tags break the DOM parser and test assertions.
 **Action:** When using Playwright to visually verify isolated snippet changes in `.tpl` Twig files, bypass Twig parsing issues by creating a local HTML stub (e.g., `test.html`) that embeds the modified HTML snippet, and load it in Playwright via `page.goto('file:///...')`.
+## 10-04-2026 - [Responsive grid overlap fix for product gallery]
+**Learning:** Using fixed pixel widths for inner containers inside percentage-based bootstrap grid columns causes overflow and overlaps on intermediate screen resolutions (e.g., tablets).
+**Action:** Use `width: 100%; max-width: 120px;` for inner elements and percentage padding for relative spacing instead of fixed pixel paddings.

@@ -3583,10 +3583,12 @@ textarea.form-control {
   }
 
   .product-with-one-image {
-    padding-left: 120px;
+    padding-left: 16.666667%;
+    max-width: 100%;
   }
   .product-thumbs-container {
-    width: 120px;
+    width: 100%;
+    max-width: 120px;
   }
   .swiper-product-thumb {
     position: relative;
