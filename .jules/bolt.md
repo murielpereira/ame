@@ -22,3 +22,6 @@
 ## $(date +%Y-%m-%d) - Prevent IntersectionObserver memory leaks inside resize handlers
 **Learning:** Initializing an `IntersectionObserver` within a `resize` event handler without disconnecting the previous instance causes severe memory leaks. On mobile devices, `resize` events fire frequently (e.g., when the browser's address bar collapses/expands), creating multiple orphaned observers that degrade scrolling performance.
 **Action:** When initializing `IntersectionObserver` within event handlers that trigger frequently (like `resize`), you must store the observer instance in a higher scope and explicitly call `.disconnect()` before re-initializing it to prevent memory leaks and duplicate executions.
+## 2026-04-11 - Optimize Scroll Listeners
+**Learning:** Un-optimized scroll events without state tracking and the passive flag block the main thread and cause layout thrashing.
+**Action:** Always add state tracking variables and the { passive: true } option to scroll event listeners.
