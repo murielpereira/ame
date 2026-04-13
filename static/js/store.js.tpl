@@ -167,13 +167,20 @@ DOMContentLoaded.addEventOrExecute(() => {
             $addedToCartNotification.css("top", fixedNotificationPosition.toString() + 'px').css("marginTop", "-1px");
 
             !function () {
+                var isNotificationFixed = false;
                 window.addEventListener("scroll", function (e) {
                     if (window.pageYOffset == 0) {
-                        $addedToCartNotification.css("top" , fixedNotificationPosition.toString() + 'px');
+                        if (isNotificationFixed) {
+                            $addedToCartNotification.css("top" , fixedNotificationPosition.toString() + 'px');
+                            isNotificationFixed = false;
+                        }
                     } else {
-                        $addedToCartNotification.css("top" , "30px");
+                        if (!isNotificationFixed) {
+                            $addedToCartNotification.css("top" , "30px");
+                            isNotificationFixed = true;
+                        }
                     }
-                });
+                }, { passive: true });
             }();
         }
 
@@ -794,6 +801,7 @@ DOMContentLoaded.addEventOrExecute(() => {
 
         var topbarHeight = jQueryNuvem(".js-topbar").outerHeight();
 
+        var headerIsCompressed = false;
         window.addEventListener("scroll", function() {
 
             var scrolledPosition = window.pageYOffset;
@@ -818,25 +826,31 @@ DOMContentLoaded.addEventOrExecute(() => {
             {% endif %}
 
             if (scrolledPosition > navbarHeight) {
-                header.addClass('compress').css('top', -topbarHeight + 'px' );
-                {% if template == 'category' %}
-                    if (window.innerWidth < 768) {
-                        setTimeout(function(){
-                            offsetCategories();
-                        },300);
-                    }
-                {% endif %}
+                if (!headerIsCompressed) {
+                    header.addClass('compress').css('top', -topbarHeight + 'px' );
+                    {% if template == 'category' %}
+                        if (window.innerWidth < 768) {
+                            setTimeout(function(){
+                                offsetCategories();
+                            },300);
+                        }
+                    {% endif %}
+                    headerIsCompressed = true;
+                }
             } else {
-                header.removeClass('compress').css("top", "0px");
-                {% if template == 'category' %}
-                    if (window.innerWidth < 768) {
-                        setTimeout(function(){
-                            offsetCategories();
-                        },300);
-                    }
-                {% endif %}
+                if (headerIsCompressed !== false) {
+                    header.removeClass('compress').css("top", "0px");
+                    {% if template == 'category' %}
+                        if (window.innerWidth < 768) {
+                            setTimeout(function(){
+                                offsetCategories();
+                            },300);
+                        }
+                    {% endif %}
+                    headerIsCompressed = false;
+                }
             }
-        });
+        }, { passive: true });
         
     {% if has_only_mobile_with_fixed_nav %}
         }
@@ -1948,6 +1962,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                 });
                 observer.observe(document.querySelector(".js-category-controls-prev"));
 
+                var lastCategoriesOffsetValue = null;
                 offsetCategories = function() {
                     var $sticky_category_controls = jQueryNuvem(".js-category-controls");
 
@@ -1957,14 +1972,17 @@ DOMContentLoaded.addEventOrExecute(() => {
                         var categoriesOffset = categoriesOffset - topbarHeight - 1;
                     }
 
-                    $sticky_category_controls.css('top', (categoriesOffset).toString() + 'px' );
+                    if (lastCategoriesOffsetValue !== categoriesOffset) {
+                        $sticky_category_controls.css('top', (categoriesOffset).toString() + 'px' );
+                        lastCategoriesOffsetValue = categoriesOffset;
+                    }
                 };
 
                 offsetCategories();
 
                 document.addEventListener("scroll", function(){
                     offsetCategories();
-                });
+                }, { passive: true });
 
             }
 
