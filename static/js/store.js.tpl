@@ -167,13 +167,19 @@ DOMContentLoaded.addEventOrExecute(() => {
             $addedToCartNotification.css("top", fixedNotificationPosition.toString() + 'px').css("marginTop", "-1px");
 
             !function () {
+                // ⚡ Bolt: Cache state and use passive listener to avoid main thread blocking and redundant DOM updates
+                var isTopNotification = true;
                 window.addEventListener("scroll", function (e) {
-                    if (window.pageYOffset == 0) {
-                        $addedToCartNotification.css("top" , fixedNotificationPosition.toString() + 'px');
-                    } else {
-                        $addedToCartNotification.css("top" , "30px");
+                    var shouldBeTop = (window.pageYOffset == 0);
+                    if (shouldBeTop !== isTopNotification) {
+                        isTopNotification = shouldBeTop;
+                        if (shouldBeTop) {
+                            $addedToCartNotification.css("top" , fixedNotificationPosition.toString() + 'px');
+                        } else {
+                            $addedToCartNotification.css("top" , "30px");
+                        }
                     }
-                });
+                }, { passive: true });
             }();
         }
 
@@ -794,11 +800,13 @@ DOMContentLoaded.addEventOrExecute(() => {
 
         var topbarHeight = jQueryNuvem(".js-topbar").outerHeight();
 
+        // ⚡ Bolt: Cache DOM queries and track state to prevent redundant updates on scroll
+        var header = jQueryNuvem(".js-head-main");
+        var isHeaderCompressed = false;
+
         window.addEventListener("scroll", function() {
 
             var scrolledPosition = window.pageYOffset;
-
-            var header = jQueryNuvem(".js-head-main");
             var navbarHeight = header.outerHeight();
 
             {# Recalculate topbar height in case image has not loaded yet and result is 0 #}
@@ -817,26 +825,31 @@ DOMContentLoaded.addEventOrExecute(() => {
                 {% endif %}
             {% endif %}
 
-            if (scrolledPosition > navbarHeight) {
-                header.addClass('compress').css('top', -topbarHeight + 'px' );
-                {% if template == 'category' %}
-                    if (window.innerWidth < 768) {
-                        setTimeout(function(){
-                            offsetCategories();
-                        },300);
-                    }
-                {% endif %}
-            } else {
-                header.removeClass('compress').css("top", "0px");
-                {% if template == 'category' %}
-                    if (window.innerWidth < 768) {
-                        setTimeout(function(){
-                            offsetCategories();
-                        },300);
-                    }
-                {% endif %}
+            var shouldCompress = scrolledPosition > navbarHeight;
+
+            if (shouldCompress !== isHeaderCompressed) {
+                isHeaderCompressed = shouldCompress;
+                if (shouldCompress) {
+                    header.addClass('compress').css('top', -topbarHeight + 'px' );
+                    {% if template == 'category' %}
+                        if (window.innerWidth < 768) {
+                            setTimeout(function(){
+                                offsetCategories();
+                            },300);
+                        }
+                    {% endif %}
+                } else {
+                    header.removeClass('compress').css("top", "0px");
+                    {% if template == 'category' %}
+                        if (window.innerWidth < 768) {
+                            setTimeout(function(){
+                                offsetCategories();
+                            },300);
+                        }
+                    {% endif %}
+                }
             }
-        });
+        }, { passive: true });
         
     {% if has_only_mobile_with_fixed_nav %}
         }
@@ -1948,23 +1961,29 @@ DOMContentLoaded.addEventOrExecute(() => {
                 });
                 observer.observe(document.querySelector(".js-category-controls-prev"));
 
+                // ⚡ Bolt: Track state and query elements once for sticky category controls
+                var $sticky_category_controls = jQueryNuvem(".js-category-controls");
+                var $head_main = jQueryNuvem(".js-head-main");
+                var lastCategoriesOffset = null;
+
                 offsetCategories = function() {
-                    var $sticky_category_controls = jQueryNuvem(".js-category-controls");
+                    var categoriesOffset = $head_main.outerHeight();
 
-                    var categoriesOffset = jQueryNuvem(".js-head-main").outerHeight();
-
-                    if(jQueryNuvem(".js-head-main").hasClass("compress")){
+                    if($head_main.hasClass("compress")){
                         var categoriesOffset = categoriesOffset - topbarHeight - 1;
                     }
 
-                    $sticky_category_controls.css('top', (categoriesOffset).toString() + 'px' );
+                    if (categoriesOffset !== lastCategoriesOffset) {
+                        lastCategoriesOffset = categoriesOffset;
+                        $sticky_category_controls.css('top', (categoriesOffset).toString() + 'px' );
+                    }
                 };
 
                 offsetCategories();
 
                 document.addEventListener("scroll", function(){
                     offsetCategories();
-                });
+                }, { passive: true });
 
             }
 
