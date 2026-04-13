@@ -3488,7 +3488,9 @@ DOMContentLoaded.addEventOrExecute(() => {
 
         // Função para inicializar a barra de progresso do vídeo
         function initVideoProgress(video) {
-            const progressFill = video.parentElement.querySelector('.video-progress-fill');
+            if (video.dataset.progressInitialized) return;
+        video.dataset.progressInitialized = 'true';
+        const progressFill = video.parentElement.querySelector('.video-progress-fill');
             
             if (!progressFill) return;
             
@@ -3614,6 +3616,8 @@ DOMContentLoaded.addEventOrExecute(() => {
             },
             on: {
                 init: function () {
+                    this.allVideos = Array.from(this.el.querySelectorAll('video'));
+                    const self = this;
                     // Aguardar um pouco para garantir que o DOM esteja pronto
                     setTimeout(function() {
                         // No mobile, carregar os 2 vídeos visíveis inicialmente
@@ -3636,7 +3640,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                             });
                         } else {
                             // No desktop, comportamento original
-                            const itemActive = document.querySelector('.js-section-video-products .swiper-slide.swiper-slide-active');
+                            const itemActive = self.slides[self.activeIndex];
                             if (itemActive) {
                                 const video = itemActive.querySelector('.lb-showcase-video-item-video-video-wrapper video');
                                 if (video) {
@@ -3649,12 +3653,12 @@ DOMContentLoaded.addEventOrExecute(() => {
                     }, 100);
                 },
                 slideChangeTransitionEnd: function () {
-                    var allVideos = document.querySelectorAll('.js-section-video-products .swiper-slide video');
+                    var allVideos = this.allVideos || [];
                     allVideos.forEach(function(video) {
                         video.pause();
                     });
 
-                    const itemActive = document.querySelector('.js-section-video-products .swiper-slide.swiper-slide-active');
+                    const itemActive = this.slides[this.activeIndex];
 
                     if( itemActive ) {
                         const video = itemActive.querySelector('.lb-showcase-video-item-video-video-wrapper video');
@@ -3667,14 +3671,14 @@ DOMContentLoaded.addEventOrExecute(() => {
                 },
                 slideChange: function () {
                     // aqui vamos pausar todos os videos primeiro
-                    var allVideos = document.querySelectorAll('.js-section-video-products .swiper-slide video');
+                    var allVideos = this.allVideos || [];
                     allVideos.forEach(function(video) {
                         video.pause();
                     });
 
                     // No mobile, pré-carregar o próximo vídeo se existir
                     if (window.innerWidth <= 767) {
-                        const nextSlide = document.querySelector('.js-section-video-products .swiper-slide.swiper-slide-next');
+                        const nextSlide = this.slides[this.activeIndex + 1];
                         if (nextSlide) {
                             const nextVideo = nextSlide.querySelector('.lb-showcase-video-item-video-video-wrapper video');
                             if (nextVideo && nextVideo.readyState < 2) { // Se não estiver carregado
@@ -3683,7 +3687,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                         }
                     }
 
-                    const itemActive = document.querySelector('.js-section-video-products .swiper-slide.swiper-slide-active');
+                    const itemActive = this.slides[this.activeIndex];
 
                     if( itemActive ) {
                         const video = itemActive.querySelector('.lb-showcase-video-item-video-video-wrapper video');
@@ -3713,22 +3717,25 @@ DOMContentLoaded.addEventOrExecute(() => {
                     },
                     on: {
                         init: function() {
+                            this.allVideos = Array.from(this.el.querySelectorAll('video'));
                             console.log('Modal Swiper inicializado');
                             // Armazenar a referência da instância
                             window.modalSwiperInstance = this;
                         },
                         slideChange: function () {
+                            const self = this;
                             console.log('Slide do modal mudou para:', this.activeIndex);
                             
                             // Pausar todos os vídeos do modal
-                            var allModalVideos = document.querySelectorAll('.js-section-video-products-modal .swiper-slide video');
+                            var allModalVideos = this.allVideos || [];
                             allModalVideos.forEach(function(video) {
                                 video.pause();
                             });
                             
                             // Dar play no vídeo do slide ativo
                             setTimeout(function() {
-                                const activeModalVideo = document.querySelector('.js-section-video-products-modal .swiper-slide-active video');
+                                const activeSlide = self.slides[self.activeIndex];
+                                const activeModalVideo = activeSlide ? activeSlide.querySelector('video') : null;
                                 console.log('Vídeo ativo encontrado no slideChange:', activeModalVideo);
                                 if (activeModalVideo) {
                                     // Verificar se o vídeo tem data-src, senão usar o src original
@@ -4024,6 +4031,8 @@ DOMContentLoaded.addEventOrExecute(() => {
 
     // Função para inicializar a barra de progresso do vídeo
     function initVideoProgress(video) {
+        if (video.dataset.progressInitialized) return;
+        video.dataset.progressInitialized = 'true';
         const progressFill = video.parentElement.querySelector('.video-progress-fill');
         
         if (!progressFill) return;
