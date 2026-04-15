@@ -168,18 +168,24 @@ DOMContentLoaded.addEventOrExecute(() => {
 
             !function () {
                 var isNotificationFixed = false;
+                var notificationScrollTimeout;
+                // [Bolt] Debounce scroll event to reduce main thread blocking
                 window.addEventListener("scroll", function (e) {
-                    if (window.pageYOffset == 0) {
-                        if (isNotificationFixed) {
-                            $addedToCartNotification.css("top" , fixedNotificationPosition.toString() + 'px');
-                            isNotificationFixed = false;
+                    if (notificationScrollTimeout) return;
+                    notificationScrollTimeout = setTimeout(function() {
+                        if (window.pageYOffset == 0) {
+                            if (isNotificationFixed) {
+                                $addedToCartNotification.css("top" , fixedNotificationPosition.toString() + 'px');
+                                isNotificationFixed = false;
+                            }
+                        } else {
+                            if (!isNotificationFixed) {
+                                $addedToCartNotification.css("top" , "30px");
+                                isNotificationFixed = true;
+                            }
                         }
-                    } else {
-                        if (!isNotificationFixed) {
-                            $addedToCartNotification.css("top" , "30px");
-                            isNotificationFixed = true;
-                        }
-                    }
+                        notificationScrollTimeout = null;
+                    }, 50);
                 }, { passive: true });
             }();
         }
@@ -676,28 +682,34 @@ DOMContentLoaded.addEventOrExecute(() => {
     var isNavArrowRightDisabled = null;
 
     if ($navDesktopList.length > 0) {
+        var navDesktopListScrollTimeout;
+        // [Bolt] Debounce scroll event to reduce main thread blocking
         $navDesktopList[0].addEventListener("scroll", function() {
-            var position = $navDesktopList[0].scrollLeft;
-            var shouldDisableLeft = (position === 0);
+            if (navDesktopListScrollTimeout) return;
+            navDesktopListScrollTimeout = setTimeout(function() {
+                var position = $navDesktopList[0].scrollLeft;
+                var shouldDisableLeft = (position === 0);
 
-            if(shouldDisableLeft !== isNavArrowLeftDisabled) {
-                if(shouldDisableLeft) {
-                    $navArrowLeft.addClass('disable');
-                } else {
-                    $navArrowLeft.removeClass('disable');
+                if(shouldDisableLeft !== isNavArrowLeftDisabled) {
+                    if(shouldDisableLeft) {
+                        $navArrowLeft.addClass('disable');
+                    } else {
+                        $navArrowLeft.removeClass('disable');
+                    }
+                    isNavArrowLeftDisabled = shouldDisableLeft;
                 }
-                isNavArrowLeftDisabled = shouldDisableLeft;
-            }
 
-            var shouldDisableRight = (Math.ceil(position) >= (menuItems - menuContainer));
-            if(shouldDisableRight !== isNavArrowRightDisabled) {
-                if(shouldDisableRight) {
-                    $navArrowRight.addClass('disable');
-                } else {
-                    $navArrowRight.removeClass('disable');
+                var shouldDisableRight = (Math.ceil(position) >= (menuItems - menuContainer));
+                if(shouldDisableRight !== isNavArrowRightDisabled) {
+                    if(shouldDisableRight) {
+                        $navArrowRight.addClass('disable');
+                    } else {
+                        $navArrowRight.removeClass('disable');
+                    }
+                    isNavArrowRightDisabled = shouldDisableRight;
                 }
-                isNavArrowRightDisabled = shouldDisableRight;
-            }
+                navDesktopListScrollTimeout = null;
+            }, 50);
         }, { passive: true });
     }
 
@@ -787,20 +799,25 @@ DOMContentLoaded.addEventOrExecute(() => {
 
             // Apply offset nav height on load
             
+            let resizeTimeout;
+            // [Bolt] Debounce resize event to reduce layout thrashing
             window.addEventListener("resize", function() {
+                if (resizeTimeout) return;
+                resizeTimeout = setTimeout(function() {
+                    // Get nav height on resize
+                    var head_height = jQueryNuvem(".js-head-main").height();
 
-                // Get nav height on resize
-                var head_height = jQueryNuvem(".js-head-main").height();
+                    // Apply offset on resize
+                    if (window.innerWidth > 768) {
+                        jQueryNuvem(selector).css("paddingTop", head_height.toString() + 'px');
+                    }else{
 
-                // Apply offset on resize
-                if (window.innerWidth > 768) {
-                    jQueryNuvem(selector).css("paddingTop", head_height.toString() + 'px');
-                }else{
-
-                    {# On mobile there is no top padding due to position sticky CSS #}
-                    jQueryNuvem(selector).css("paddingTop", "0px");
-                }
-            });
+                        {# On mobile there is no top padding due to position sticky CSS #}
+                        jQueryNuvem(selector).css("paddingTop", "0px");
+                    }
+                    resizeTimeout = null;
+                }, 100);
+            }, { passive: true });
         }
 
     {% set has_only_mobile_with_fixed_nav =  not settings.head_fix_desktop %}
@@ -822,55 +839,60 @@ DOMContentLoaded.addEventOrExecute(() => {
         var headerIsCompressed = false;
         var $headerMain = jQueryNuvem(".js-head-main");
         if ($headerMain.length > 0) {
+            var scrollTimeout;
+            // [Bolt] Debounce scroll event to improve scroll performance
             window.addEventListener("scroll", function() {
+                if (scrollTimeout) return;
+                scrollTimeout = setTimeout(function() {
+                    var scrolledPosition = window.pageYOffset;
 
-                var scrolledPosition = window.pageYOffset;
+                    var header = $headerMain;
+                    var navbarHeight = $headerMain[0].offsetHeight;
 
-                var header = $headerMain;
-                var navbarHeight = $headerMain[0].offsetHeight;
+                {# Recalculate topbar height in case image has not loaded yet and result is 0 #}
 
-            {# Recalculate topbar height in case image has not loaded yet and result is 0 #}
-
-            {% if adbarWithoutMessages %}
-                {% if adbarImageMobileOnly %}
-                    if (window.innerWidth < 768) {
-                {% elseif adbarImageDesktopOnly %}
-                    if (window.innerWidth > 768) {
-                {% endif %}
-                        if (topbarHeight == 0) {
-                            topbarHeight = jQueryNuvem(".js-topbar").outerHeight();
+                {% if adbarWithoutMessages %}
+                    {% if adbarImageMobileOnly %}
+                        if (window.innerWidth < 768) {
+                    {% elseif adbarImageDesktopOnly %}
+                        if (window.innerWidth > 768) {
+                    {% endif %}
+                            if (topbarHeight == 0) {
+                                topbarHeight = jQueryNuvem(".js-topbar").outerHeight();
+                            }
+                    {% if adbarImageMobileOnly or adbarImageDesktopOnly %}
                         }
-                {% if adbarImageMobileOnly or adbarImageDesktopOnly %}
+                    {% endif %}
+                {% endif %}
+
+                if (scrolledPosition > navbarHeight) {
+                    if (!headerIsCompressed) {
+                        header.addClass('compress').css('top', -topbarHeight + 'px' );
+                        {% if template == 'category' %}
+                            if (window.innerWidth < 768) {
+                                setTimeout(function(){
+                                    offsetCategories();
+                                },300);
+                            }
+                        {% endif %}
+                        headerIsCompressed = true;
                     }
-                {% endif %}
-            {% endif %}
-
-            if (scrolledPosition > navbarHeight) {
-                if (!headerIsCompressed) {
-                    header.addClass('compress').css('top', -topbarHeight + 'px' );
-                    {% if template == 'category' %}
-                        if (window.innerWidth < 768) {
-                            setTimeout(function(){
-                                offsetCategories();
-                            },300);
-                        }
-                    {% endif %}
-                    headerIsCompressed = true;
+                } else {
+                    if (headerIsCompressed !== false) {
+                        header.removeClass('compress').css("top", "0px");
+                        {% if template == 'category' %}
+                            if (window.innerWidth < 768) {
+                                setTimeout(function(){
+                                    offsetCategories();
+                                },300);
+                            }
+                        {% endif %}
+                        headerIsCompressed = false;
+                    }
                 }
-            } else {
-                if (headerIsCompressed !== false) {
-                    header.removeClass('compress').css("top", "0px");
-                    {% if template == 'category' %}
-                        if (window.innerWidth < 768) {
-                            setTimeout(function(){
-                                offsetCategories();
-                            },300);
-                        }
-                    {% endif %}
-                    headerIsCompressed = false;
-                }
-            }
-        }, { passive: true });
+                scrollTimeout = null;
+                }, 50);
+            }, { passive: true });
         }
         
     {% if has_only_mobile_with_fixed_nav %}
@@ -2001,8 +2023,14 @@ DOMContentLoaded.addEventOrExecute(() => {
 
                 offsetCategories();
 
+                var offsetCategoriesScrollTimeout;
+                // [Bolt] Debounce scroll event to prevent excessive category offset calculations
                 document.addEventListener("scroll", function(){
-                    offsetCategories();
+                    if (offsetCategoriesScrollTimeout) return;
+                    offsetCategoriesScrollTimeout = setTimeout(function() {
+                        offsetCategories();
+                        offsetCategoriesScrollTimeout = null;
+                    }, 50);
                 }, { passive: true });
 
             }
