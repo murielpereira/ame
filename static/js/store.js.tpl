@@ -669,19 +669,37 @@ DOMContentLoaded.addEventOrExecute(() => {
         menuItems +=  jQueryNuvem(el).first(el => el.offsetWidth);
     });
 
-    jQueryNuvem(".js-nav-desktop-list").on("scroll", function() {
-        var position = jQueryNuvem('.js-nav-desktop-list').prop("scrollLeft");
-        if(position == 0) {
-            jQueryNuvem(".js-nav-desktop-list-arrow-left").addClass('disable');
-        } else {
-            jQueryNuvem(".js-nav-desktop-list-arrow-left").removeClass('disable');
-        }
-        if(position == ( menuItems - menuContainer )) {
-            jQueryNuvem(".js-nav-desktop-list-arrow-right").addClass('disable');
-        } else {
-            jQueryNuvem(".js-nav-desktop-list-arrow-right").removeClass('disable');
-        }
-    });
+    var $navDesktopList = jQueryNuvem(".js-nav-desktop-list");
+    var $navArrowLeft = jQueryNuvem(".js-nav-desktop-list-arrow-left");
+    var $navArrowRight = jQueryNuvem(".js-nav-desktop-list-arrow-right");
+    var isNavArrowLeftDisabled = null;
+    var isNavArrowRightDisabled = null;
+
+    if ($navDesktopList.length > 0) {
+        $navDesktopList[0].addEventListener("scroll", function() {
+            var position = $navDesktopList[0].scrollLeft;
+            var shouldDisableLeft = (position === 0);
+
+            if(shouldDisableLeft !== isNavArrowLeftDisabled) {
+                if(shouldDisableLeft) {
+                    $navArrowLeft.addClass('disable');
+                } else {
+                    $navArrowLeft.removeClass('disable');
+                }
+                isNavArrowLeftDisabled = shouldDisableLeft;
+            }
+
+            var shouldDisableRight = (Math.ceil(position) >= (menuItems - menuContainer));
+            if(shouldDisableRight !== isNavArrowRightDisabled) {
+                if(shouldDisableRight) {
+                    $navArrowRight.addClass('disable');
+                } else {
+                    $navArrowRight.removeClass('disable');
+                }
+                isNavArrowRightDisabled = shouldDisableRight;
+            }
+        }, { passive: true });
+    }
 
     {% if logo_desktop_left %}
 
@@ -802,12 +820,14 @@ DOMContentLoaded.addEventOrExecute(() => {
         var topbarHeight = jQueryNuvem(".js-topbar").outerHeight();
 
         var headerIsCompressed = false;
-        window.addEventListener("scroll", function() {
+        var $headerMain = jQueryNuvem(".js-head-main");
+        if ($headerMain.length > 0) {
+            window.addEventListener("scroll", function() {
 
-            var scrolledPosition = window.pageYOffset;
+                var scrolledPosition = window.pageYOffset;
 
-            var header = jQueryNuvem(".js-head-main");
-            var navbarHeight = header.outerHeight();
+                var header = $headerMain;
+                var navbarHeight = $headerMain[0].offsetHeight;
 
             {# Recalculate topbar height in case image has not loaded yet and result is 0 #}
 
@@ -851,6 +871,7 @@ DOMContentLoaded.addEventOrExecute(() => {
                 }
             }
         }, { passive: true });
+        }
         
     {% if has_only_mobile_with_fixed_nav %}
         }

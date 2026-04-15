@@ -25,3 +25,7 @@
 ## 2026-04-11 - Optimize Scroll Listeners
 **Learning:** Un-optimized scroll events without state tracking and the passive flag block the main thread and cause layout thrashing.
 **Action:** Always add state tracking variables and the { passive: true } option to scroll event listeners.
+
+## 2024-05-24 - Optimize Scroll Listeners
+**Learning:** Un-optimized scroll events that repeatedly query the DOM and lack state tracking cause excessive reflows and block the main thread.
+**Action:** Always add state tracking variables, cache DOM nodes outside the listener, and use the `{ passive: true }` option for scroll events.
