@@ -218,7 +218,7 @@
                             <input 
                                 data-name="{{ customization_name }}"
                                 {% if customization_required %}
-                                    required="required"
+                                    data-required="true"
                                 {% endif %}
                                 type="text"
                                 tabindex="{{ customization_order }}" 
@@ -247,7 +247,7 @@
                             <input 
                                 data-name="{{ customization_name }}"
                                 {% if customization_required %}
-                                    required="required"
+                                    data-required="true"
                                 {% endif %}
                                 type="text"
                                 tabindex="{{ customization_order }}"
@@ -275,7 +275,7 @@
                             <textarea 
                                 data-name="{{ customization_name }}"
                                 {% if customization_required %}
-                                    required="required"
+                                    data-required="true"
                                 {% endif %}
                                 tabindex="{{ customization_order }}"
                                 type="textarea"
@@ -331,7 +331,7 @@
                             <input type="hidden"
                                 data-name="{{ customization_name }}"
                                 {% if customization_required %}
-                                    required="required"
+                                    data-required="true"
                                 {% endif %}
                                 name="properties[{{ customization_name }}]" 
                                 minlength="1" 

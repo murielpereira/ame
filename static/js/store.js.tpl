@@ -2984,7 +2984,7 @@ DOMContentLoaded.addEventOrExecute(() => {
 
             let customFieldsValues = [];
             $customFields.forEach(function(field){
-                if( jQueryNuvem(field).attr('required') && jQueryNuvem(field).val() == '' ){
+                if( jQueryNuvem(field).data('required') && jQueryNuvem(field).val() == '' ){
                     customFieldsValues.push(false);
                     jQueryNuvem(field).closest('.lb-input-container').find('.lb-customization-input-validation-message').show();
                 } else {
