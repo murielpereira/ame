@@ -517,17 +517,20 @@ DOMContentLoaded.addEventOrExecute(() => {
         if (entry.isIntersecting && !entry.target.observed) {
           entry.target.classList.add("is-inViewport");
           entry.target.observed = true;
+          observer.unobserve(entry.target);
         }
       });
     };
 
-    // Attach observer to every [data-transition] element:
+    // Attach a single observer to every [data-transition] element:
     const ELs_inViewport = document.querySelectorAll('[data-transition]');
-    ELs_inViewport.forEach(EL => {
-      EL.observed = false; // Initialize the observed flag for each element
+    if (ELs_inViewport.length > 0 && 'IntersectionObserver' in window) {
       const Obs = new IntersectionObserver(inViewport);
-      Obs.observe(EL);
-    });
+      ELs_inViewport.forEach(EL => {
+        EL.observed = false; // Initialize the observed flag for each element
+        Obs.observe(EL);
+      });
+    }
 
     applyMarqueeAnimation = function(marqueeSelector, textSelector){
 
