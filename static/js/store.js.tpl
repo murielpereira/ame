@@ -512,22 +512,31 @@ DOMContentLoaded.addEventOrExecute(() => {
       #Transitions
     ==============================================================================*/ #}
 
+    // [Bolt] Instantiate single IntersectionObserver outside the loop
     const inViewport = (entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting && !entry.target.observed) {
           entry.target.classList.add("is-inViewport");
           entry.target.observed = true;
+          // [Bolt] Explicitly unobserve element once logic is resolved
+          observer.unobserve(entry.target);
         }
       });
     };
 
     // Attach observer to every [data-transition] element:
     const ELs_inViewport = document.querySelectorAll('[data-transition]');
-    ELs_inViewport.forEach(EL => {
-      EL.observed = false; // Initialize the observed flag for each element
+    if ('IntersectionObserver' in window) {
       const Obs = new IntersectionObserver(inViewport);
-      Obs.observe(EL);
-    });
+      ELs_inViewport.forEach(EL => {
+        EL.observed = false; // Initialize the observed flag for each element
+        Obs.observe(EL);
+      });
+    } else {
+      ELs_inViewport.forEach(EL => {
+        EL.classList.add("is-inViewport");
+      });
+    }
 
     applyMarqueeAnimation = function(marqueeSelector, textSelector){
 
