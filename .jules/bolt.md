@@ -29,3 +29,7 @@
 ## 2024-05-24 - Optimize Scroll Listeners
 **Learning:** Un-optimized scroll events that repeatedly query the DOM and lack state tracking cause excessive reflows and block the main thread.
 **Action:** Always add state tracking variables, cache DOM nodes outside the listener, and use the `{ passive: true }` option for scroll events.
+
+## 2024-06-18 - Single IntersectionObserver vs Multiple Instances
+**Learning:** Creating a new `IntersectionObserver` instance for every single element in a list (e.g., inside a `forEach` loop) is an anti-pattern that creates excessive concurrent observers, degrading performance. Additionally, not unobserving elements after their initial visibility transition keeps unnecessary observers active.
+**Action:** Always instantiate a single `IntersectionObserver` outside the loop and reuse it to observe multiple elements. Call `observer.unobserve(element)` once the element no longer needs to be tracked.
