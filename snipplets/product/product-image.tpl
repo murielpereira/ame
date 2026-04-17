@@ -61,11 +61,16 @@
 						{% include 'snipplets/product/product-video.tpl' %}
 					{% endif %}
 				</div>
+				{% if has_multiple_slides %}
+					<div class="js-swiper-product-prev swiper-button-prev svg-icon-text" aria-label="{{ 'Anterior' | translate }}" role="button" tabindex="0">
+						<svg class="icon-inline icon-lg icon-flip-horizontal" aria-hidden="true"><use xlink:href="#chevron"/></svg>
+					</div>
+					<div class="js-swiper-product-next swiper-button-next svg-icon-text" aria-label="{{ 'Próxima' | translate }}" role="button" tabindex="0">
+						<svg class="icon-inline icon-lg" aria-hidden="true"><use xlink:href="#chevron"/></svg>
+					</div>
+				{% endif %}
 			</div>
 
-			<div class="drag-to-left-icon">
-			<svg width="64px" height="64px" viewBox="0 0 24 24" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><defs><style>.cls-1{fill:none;stroke:#020202;stroke-miterlimit:10;stroke-width:1.91px;}</style></defs><path class="cls-1" d="M13,22.5,7.82,17.36a2,2,0,0,1-.59-1.43,2,2,0,0,1,2-2,2,2,0,0,1,1.43.59L12,15.82V6.38a2,2,0,0,1,1.74-2,1.87,1.87,0,0,1,1.51.56,1.83,1.83,0,0,1,.57,1.34V12l5,.72a1.91,1.91,0,0,1,1.64,1.89h0a17.18,17.18,0,0,1-1.82,7.71l-.09.18"></path><path class="cls-1" d="M15.82,10.64a4.54,4.54,0,0,0,1.47-1,4.78,4.78,0,1,0-6.76,0,4.54,4.54,0,0,0,1.47,1"></path><polyline class="cls-1" points="4.36 9.14 1.5 6.27 4.36 3.41"></polyline><line class="cls-1" x1="9.14" y1="6.27" x2="1.5" y2="6.27"></line></g></svg>
-			</div>
 			
 			{% snipplet 'placeholders/product-detail-image-placeholder.tpl' %}
 			{% if has_multiple_slides and home_main_product %}
