@@ -6,7 +6,13 @@
       "Bash(curl -s \"https://acdn-us.mitiendanube.com/stores/004/916/830/themes/recife/dart-style-critical-30a9653036b5a0b13b1c18549a5b8583.css\")",
       "Bash(curl -s \"https://acdn-us.mitiendanube.com/stores/004/916/830/themes/recife/dart-style-async-17d758031937210e11fd3460d3576bef.css\")",
       "WebFetch(domain:acdn-us.mitiendanube.com)",
-      "WebFetch(domain:ameacessoriospet.com.br)"
+      "WebFetch(domain:ameacessoriospet.com.br)",
+      "Bash(git -C \"c:/Users/pedid/OneDrive/Área de Trabalho/Arquivos Âme/Muriel/Código Nuvem\" log --oneline -20 -- snipplets/home/ snipplets/grid/item.tpl static/css/style-critical.scss)",
+      "Bash(git show *)",
+      "Bash(node -e \"const fs=require\\('fs'\\); let c=fs.readFileSync\\('/tmp/store-orig.js','utf8'\\); c=c.replace\\(/\\\\{#[\\\\s\\\\S]*?#\\\\}/g,''\\); c=c.replace\\(/\\\\{\\\\{[\\\\s\\\\S]*?\\\\}\\\\}/g,'\\\\\"\\\\\"'\\); c=c.replace\\(/\\\\{%[\\\\s\\\\S]*?%\\\\}/g,''\\); try{new Function\\(c\\); console.log\\('HEAD Syntax OK'\\);}catch\\(e\\){console.error\\('HEAD Syntax error:', e.message\\);}\")",
+      "Bash(git stash *)",
+      "Bash(node -e \"const fs=require\\('fs'\\); let c=fs.readFileSync\\('./static/js/store.js.tpl','utf8'\\); c=c.replace\\(/\\\\{#[\\\\s\\\\S]*?#\\\\}/g,''\\); c=c.replace\\(/\\\\{\\\\{[\\\\s\\\\S]*?\\\\}\\\\}/g,'\\\\\"\\\\\"'\\); c=c.replace\\(/\\\\{%[\\\\s\\\\S]*?%\\\\}/g,''\\); try{new Function\\(c\\); console.log\\('HEAD Syntax OK'\\);}catch\\(e\\){console.error\\('HEAD Syntax error:', e.message\\);}\")",
+      "Bash(git -C \"c:/Users/pedid/OneDrive/Área de Trabalho/Arquivos Âme/Muriel/Código Nuvem\" diff --stat)"
     ]
   }
 }

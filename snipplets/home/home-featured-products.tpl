@@ -15,10 +15,10 @@
 	{% set featured_sale_classes = settings.sale_product_colors ? 'section-sale-products-home section-sale-products-home-colors section-home-color' : 'section-sale-products-home' %}
 {% elseif has_promotion %}
 	{% set section_id = 'promotion' %}
-	{% set featured_promotion_classes = settings.promotion_product_colors ? 'section-promotion-products-home section-promotion-products-home-colors section-home-color' : 'section-sale-products-home' %}
+	{% set featured_promotion_classes = settings.promotion_product_colors ? 'section-promotion-products-home section-promotion-products-home-colors section-home-color' : 'section-promotion-products-home' %}
 {% else %}
 	{% set section_id = 'best-seller' %}
-	{% set featured_best_seller_classes = settings.best_seller_product_colors ? 'section-best-seller-products-home section-best-seller-products-home-colors section-home-color' : 'best-seller-sale-products-home' %}
+	{% set featured_best_seller_classes = settings.best_seller_product_colors ? 'section-best-seller-products-home section-best-seller-products-home-colors section-home-color' : 'section-best-seller-products-home' %}
 {% endif %}
 
 {% if has_featured or has_new or has_sale or has_promotion or has_best_seller %}

@@ -142,9 +142,10 @@ DOMContentLoaded.addEventOrExecute(() => {
         inputContainers.forEach(container => {
             const input = container.querySelector('input, textarea');
             const limiter = container.querySelector('.lb-imput-helper-limiter');
-            
-            if (limiter) {
-                const name = input.getAttribute('data-name');
+
+            // Guard against containers that have a limiter but no input/textarea
+            // (would otherwise throw "addEventListener of undefined").
+            if (limiter && input) {
                 input.addEventListener('keyup', (e) => {
                     limiter.innerHTML = input.getAttribute('maxlength') - e.target.value.length;
                 });
@@ -2148,36 +2149,33 @@ DOMContentLoaded.addEventOrExecute(() => {
                 variantsGroup: ".js-product-variants-group",
                 variantButton: ".js-insta-variant",
                 noStockClass: "btn-variant-no-stock",
-                dataVariationId: "data-variation-id",
                 dataOption: "data-option"
             };
 
             {# Product container wrapper #}
             const wrapper = container ? container : jQueryNuvem('#single-product');
-            if (!wrapper) return;
+            if (!wrapper || !wrapper.length) return;
 
             {# Fetch the variants data from the container #}
-            const dataVariants = wrapper.data('variants');
-            const variantsLength = wrapper.find(config.variantsGroup).length;
+            let dataVariants = wrapper.data('variants');
+            if (typeof dataVariants === 'string') {
+                try { dataVariants = JSON.parse(dataVariants); } catch (e) { return; }
+            }
+            if (!Array.isArray(dataVariants) || !dataVariants.length) return;
+
+            {# Iterate variation groups by DOM position (option0/1/2 map to position, not variation.id). #}
+            const allGroups = wrapper.find(config.variantsGroup);
+            const variantsLength = allGroups.length;
+            if (!variantsLength) return;
 
             {# Get selected options from product variations #}
             const getOptions = (productVariationId, variantOption) => {
-                if (productVariationId === 2) {
-                    return {
-                        option0: String(wrapper.find(`${config.variantsGroup}[${config.dataVariationId}="0"] select`).val()),
-                        option1: String(wrapper.find(`${config.variantsGroup}[${config.dataVariationId}="1"] select`).val()),
-                        option2: String(jQueryNuvem(variantOption).attr('data-option')),
-                    };
-                } else if (productVariationId === 1) {
-                    return {
-                        option0: String(wrapper.find(`${config.variantsGroup}[${config.dataVariationId}="0"] select`).val()),
-                        option1: String(jQueryNuvem(variantOption).attr('data-option')),
-                    };
-                } else {
-                    return {
-                        option0: String(jQueryNuvem(variantOption).attr('data-option')),
-                    };
+                const options = {};
+                for (let i = 0; i < productVariationId; i++) {
+                    options[`option${i}`] = String(allGroups.eq(i).find('select').val());
                 }
+                options[`option${productVariationId}`] = String(jQueryNuvem(variantOption).attr('data-option'));
+                return options;
             };
 
             {# Filter available variants based on selected options #}
@@ -2189,14 +2187,15 @@ DOMContentLoaded.addEventOrExecute(() => {
 
             {# Update stock status for variant buttons #}
             const updateStockStatus = (productVariationId) => {
-                const variationGroup = wrapper.find(`${config.variantsGroup}[${config.dataVariationId}="${productVariationId}"]`);
+                const variationGroup = allGroups.eq(productVariationId);
                 variationGroup.find(`${config.variantButton}.${config.noStockClass}`).removeClass(config.noStockClass);
 
                 variationGroup.find(config.variantButton).each((variantOption, item) => {
                     const options = getOptions(productVariationId, variantOption);
                     const itemsAvailable = filterVariants(options);
-                    const button = wrapper.find(`${config.variantButton}[${config.dataOption}="${options[`option${productVariationId}`].replace(/"/g, '\\"')}"]`);
-                    
+                    const optionId = options[`option${productVariationId}`].replace(/"/g, '\\"');
+                    const button = variationGroup.find(`${config.variantButton}[${config.dataOption}="${optionId}"]`);
+
                     if (!itemsAvailable.length) {
                         button.addClass(config.noStockClass);
                     }
