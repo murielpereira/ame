@@ -48,11 +48,6 @@ const countdownLink = rawLink || '#';
 
 const fullContainerEl = document.querySelector('.contador-regressivo-container');
 
-// LOG para você conferir no console do navegador (F12)
-console.log("Contador Status:", countdownEnabled);
-console.log("Contador Data:", countdownDateString);
-console.log("Contador Mensagem:", countdownMessage);
-
 // --- Lógica Principal ---
 if (countdownEnabled === '1' && fullContainerEl) {
     

@@ -64,6 +64,46 @@
 
 ==============================================================================*/#}
 
+{#/*============================================================================
+  #Filtro de ruído de erros injetados por webviews / apps de terceiros
+  Os erros abaixo NÃO vêm do nosso código — são gerados pelo webview do
+  Instagram/iOS Safari e por scripts injetados (autofill, message handlers,
+  ResizeObserver loop). Não impactam o site, mas inflam o painel do Clarity
+  e mascaram erros reais. Por isso suprimimos só esses padrões específicos.
+==============================================================================*/ #}
+(function() {
+    var noisePatterns = [
+        /resizeobserver loop/i,
+        /webkit\.messagehandlers/i,
+        /_autofillcallbackhandler/i,
+        /private-token/i
+    ];
+
+    function isNoise(message) {
+        if (!message) return false;
+        var text = typeof message === 'string' ? message : (message.message || '');
+        for (var i = 0; i < noisePatterns.length; i++) {
+            if (noisePatterns[i].test(text)) return true;
+        }
+        return false;
+    }
+
+    window.addEventListener('error', function(e) {
+        if (isNoise(e.message)) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+        }
+    }, true);
+
+    window.addEventListener('unhandledrejection', function(e) {
+        var reason = e.reason && (e.reason.message || e.reason);
+        if (isNoise(reason)) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+        }
+    });
+})();
+
 // Move to our_content
 window.urls = {
     "shippingUrl": "{{ store.shipping_calculator_url | escape('js') }}"
@@ -1968,6 +2008,11 @@ DOMContentLoaded.addEventOrExecute(() => {
 
         {# /* // Fixed category controls */ #}
 
+            // Default no-op so callers (mobile scroll handler) never hit
+            // "can't find variable: offsetCategories" if the page loaded at
+            // desktop width and was later resized below 768px.
+            var offsetCategories = function() {};
+
             if (window.innerWidth < 768) {
 
                 $category_controls.css("top" , nav_height.toString() + 'px');
@@ -2781,8 +2826,7 @@ DOMContentLoaded.addEventOrExecute(() => {
             var width = window.innerWidth;
 
             var productSwiper = null;
-            console.log(`Mudou js - criou`);
-            
+
             createSwiper(
                 '.js-swiper-product', {
                     lazy: true,
@@ -3546,34 +3590,25 @@ DOMContentLoaded.addEventOrExecute(() => {
             // Pegar o índice do slide clicado usando data-index
             const currentSlide = jQueryNuvem(this).closest('.swiper-slide');
             const slideIndex = parseInt(currentSlide.attr('data-index')) - 1; // -1 porque data-index começa em 1
-            
-            console.log('Slide clicado, índice:', slideIndex);
-            
+
             // Abrir o modal primeiro
             jQueryNuvem('.lb-showcase-videos-modal').show();
             jQueryNuvem('body').addClass('modal-open');
             
             // Criar ou obter o Swiper do modal
             const modalSwiper = createModalSwiper();
-            
-            console.log('Modal aberto, slide ativo:', slideIndex);
-            console.log('Modal Swiper:', modalSwiper);
-            
+
             // Aguardar um pouco para o Swiper inicializar completamente
             setTimeout(function() {
                 const finalModalSwiper = window.modalSwiperInstance || window.modalSwiper;
-                console.log('Modal Swiper final:', finalModalSwiper);
-                
+
                 if (finalModalSwiper) {
                     // Pausar todos os vídeos primeiro
                     const allVideos = document.querySelectorAll('.js-section-video-products-modal .swiper-slide video');
                     allVideos.forEach(function(video) {
                         video.pause();
                     });
-                    
-                    console.log('slideIndex', slideIndex);
-                    console.log('Slide atual do modal:', finalModalSwiper.activeIndex);
-                    
+
                     // Forçar ir para o slide correto, mesmo se já estiver nele
                     if (finalModalSwiper.activeIndex !== slideIndex) {
                         finalModalSwiper.slideTo(slideIndex, 0, false);
@@ -3586,26 +3621,15 @@ DOMContentLoaded.addEventOrExecute(() => {
                     // Aguardar um pouco e dar play no vídeo
                     setTimeout(function() {
                         const modalVideo = document.querySelector('.js-section-video-products-modal .swiper-slide-active video');
-                        console.log('Vídeo do modal encontrado:', modalVideo);
                         if (modalVideo) {
                             // Verificar se o vídeo tem data-src, senão usar o src original
                             const videoSrc = modalVideo.getAttribute('data-src') || modalVideo.getAttribute('src');
                             if (videoSrc && videoSrc !== 'null') {
                                 modalVideo.setAttribute('src', videoSrc);
-                                modalVideo.play().then(function() {
-                                    console.log('Vídeo do modal iniciado com sucesso');
-                                }).catch(function(error) {
-                                    console.log('Erro ao dar play no vídeo:', error);
-                                });
-                            } else {
-                                console.log('URL do vídeo inválida:', videoSrc);
+                                modalVideo.play().catch(function() { /* play promise rejected — ignore */ });
                             }
-                        } else {
-                            console.log('Vídeo do modal não encontrado');
                         }
                     }, 500);
-                } else {
-                    console.log('Modal Swiper ainda não está disponível');
                 }
             }, 100);
         });
@@ -3725,7 +3749,6 @@ DOMContentLoaded.addEventOrExecute(() => {
         // Função para criar o Swiper do modal
         function createModalSwiper() {
             if (!window.modalSwiper) {
-                console.log('Criando novo Modal Swiper...');
                 window.modalSwiper = createSwiper('.js-section-video-products-modal', {
                     lazy: true,
                     watchOverflow: true,
@@ -3739,14 +3762,12 @@ DOMContentLoaded.addEventOrExecute(() => {
                     on: {
                         init: function() {
                             this.allVideos = Array.from(this.el.querySelectorAll('video'));
-                            console.log('Modal Swiper inicializado');
                             // Armazenar a referência da instância
                             window.modalSwiperInstance = this;
                         },
                         slideChange: function () {
                             const self = this;
-                            console.log('Slide do modal mudou para:', this.activeIndex);
-                            
+
                             // Pausar todos os vídeos do modal
                             var allModalVideos = this.allVideos || [];
                             allModalVideos.forEach(function(video) {
@@ -3757,28 +3778,18 @@ DOMContentLoaded.addEventOrExecute(() => {
                             setTimeout(function() {
                                 const activeSlide = self.slides[self.activeIndex];
                                 const activeModalVideo = activeSlide ? activeSlide.querySelector('video') : null;
-                                console.log('Vídeo ativo encontrado no slideChange:', activeModalVideo);
                                 if (activeModalVideo) {
                                     // Verificar se o vídeo tem data-src, senão usar o src original
                                     const videoSrc = activeModalVideo.getAttribute('data-src') || activeModalVideo.getAttribute('src');
                                     if (videoSrc && videoSrc !== 'null') {
                                         activeModalVideo.setAttribute('src', videoSrc);
-                                        activeModalVideo.play().then(function() {
-                                            console.log('Vídeo do slide', this.activeIndex, 'iniciado com sucesso');
-                                        }).catch(function(error) {
-                                            console.log('Erro ao dar play no vídeo do slide', this.activeIndex, ':', error);
-                                        });
-                                    } else {
-                                        console.log('URL do vídeo inválida:', videoSrc);
+                                        activeModalVideo.play().catch(function() { /* play promise rejected — ignore */ });
                                     }
-                                } else {
-                                    console.log('Vídeo ativo não encontrado no slide', this.activeIndex);
                                 }
                             }, 300);
                         }
                     }
                 });
-                console.log('Modal Swiper criado:', window.modalSwiper);
             }
             return window.modalSwiperInstance || window.modalSwiper;
         }     
@@ -3812,8 +3823,6 @@ DOMContentLoaded.addEventOrExecute(() => {
             // Fechar modal
             jQueryNuvem('.lb-showcase-videos-modal').hide();
             jQueryNuvem('body').removeClass('modal-open');
-            
-            console.log('Modal fechado');
         }
 
         {# /* // Home slider */ #}
@@ -3965,7 +3974,6 @@ DOMContentLoaded.addEventOrExecute(() => {
             $parent.find(".lb-customization-radio-label").removeClass("selected");
             $this.addClass("selected");
 
-            console.log($this.data("value"));
             $input.val($this.data("value"));
             $label.text($this.data("value"));
         });
