@@ -55,11 +55,11 @@
                     {% endfor %}
                 </div>
                 {% if num_messages > 1 and not adbar_animated %}
-                    <div class="js-swiper-adbar-prev swiper-button-absolute swiper-button-prev svg-icon-text">
-                        <svg class="icon-inline icon-sm icon-flip-horizontal"><use xlink:href="#chevron"/></svg>
+                    <div class="js-swiper-adbar-prev swiper-button-absolute swiper-button-prev svg-icon-text" aria-label="{{ 'Anterior' | translate }}" role="button" tabindex="0">
+                        <svg class="icon-inline icon-sm icon-flip-horizontal" aria-hidden="true"><use xlink:href="#chevron"/></svg>
                     </div>
-                    <div class="js-swiper-adbar-next swiper-button-absolute swiper-button-next svg-icon-text ml-2">
-                        <svg class="icon-inline icon-sm"><use xlink:href="#chevron"/></svg>
+                    <div class="js-swiper-adbar-next swiper-button-absolute swiper-button-next svg-icon-text ml-2" aria-label="{{ 'Próxima' | translate }}" role="button" tabindex="0">
+                        <svg class="icon-inline icon-sm" aria-hidden="true"><use xlink:href="#chevron"/></svg>
                     </div>
                 {% endif %}
             </div>

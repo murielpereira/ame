@@ -113,11 +113,11 @@
             </div>
         </div>
         {% if (section_banner and section_banner is not empty and section_slider_desktop) or params.preview %}
-            <div class="js-swiper-{{ section_id }}-prev swiper-button-prev d-none d-md-block svg-icon-text {% if section_without_margins %}swiper-button-opacity{% else %}swiper-button-outside{% endif %}">
-                <svg class="icon-inline icon-lg icon-flip-horizontal"><use xlink:href="#chevron"/></svg>
+            <div class="js-swiper-{{ section_id }}-prev swiper-button-prev d-none d-md-block svg-icon-text {% if section_without_margins %}swiper-button-opacity{% else %}swiper-button-outside{% endif %}" aria-label="{{ 'Anterior' | translate }}" role="button" tabindex="0">
+                <svg class="icon-inline icon-lg icon-flip-horizontal" aria-hidden="true"><use xlink:href="#chevron"/></svg>
             </div>
-            <div class="js-swiper-{{ section_id }}-next swiper-button-next d-none d-md-block svg-icon-text {% if section_without_margins %}swiper-button-opacity{% else %}swiper-button-outside{% endif %}">
-                <svg class="icon-inline icon-lg"><use xlink:href="#chevron"/></svg>
+            <div class="js-swiper-{{ section_id }}-next swiper-button-next d-none d-md-block svg-icon-text {% if section_without_margins %}swiper-button-opacity{% else %}swiper-button-outside{% endif %}" aria-label="{{ 'Próxima' | translate }}" role="button" tabindex="0">
+                <svg class="icon-inline icon-lg" aria-hidden="true"><use xlink:href="#chevron"/></svg>
             </div>
         {% endif %}
     {% else %}
