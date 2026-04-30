@@ -10,8 +10,8 @@
                             <div class="d-none d-md-block order-last order-md-0 col-md-auto pr-md-0 mt-3 mt-md-0">
                                 <div class="product-thumbs-container position-relative">
                                     <div class="text-center d-none d-md-block">
-                                        <div class="js-swiper-product-thumbs-prev-demo swiper-button-prev swiper-product-thumb-control svg-icon-text">
-                                            <svg class="icon-inline icon-lg icon-flip-vertical"><use xlink:href="#chevron-down"/></svg>
+                                        <div class="js-swiper-product-thumbs-prev-demo swiper-button-prev swiper-product-thumb-control svg-icon-text" aria-label="{{ 'Anterior' | translate }}" role="button" tabindex="0">
+                                            <svg class="icon-inline icon-lg icon-flip-vertical" aria-hidden="true"><use xlink:href="#chevron-down"/></svg>
                                         </div>
                                     </div>
                                     <div class="js-swiper-product-thumbs-demo swiper-product-thumb">
@@ -34,8 +34,8 @@
                                         </div>
                                     </div>
                                     <div class="text-center d-none d-md-block">
-                                        <div class="js-swiper-product-thumbs-next-demo swiper-button-next swiper-product-thumb-control svg-icon-text">
-                                            <svg class="icon-inline icon-lg"><use xlink:href="#chevron-down"/></svg>
+                                        <div class="js-swiper-product-thumbs-next-demo swiper-button-next swiper-product-thumb-control svg-icon-text" aria-label="{{ 'Próxima' | translate }}" role="button" tabindex="0">
+                                            <svg class="icon-inline icon-lg" aria-hidden="true"><use xlink:href="#chevron-down"/></svg>
                                         </div>
                                     </div>
                                 </div>

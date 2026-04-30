@@ -121,11 +121,11 @@
             {% if use_slider %}
                 </div>
                 {% if section_slider_desktop %}
-                    <div class="js-swiper-{{ section_id }}-prev swiper-button-prev swiper-button-outside d-none d-md-block svg-icon-text">
-                        <svg class="icon-inline icon-lg icon-flip-horizontal"><use xlink:href="#chevron"/></svg>
+                    <div class="js-swiper-{{ section_id }}-prev swiper-button-prev swiper-button-outside d-none d-md-block svg-icon-text" aria-label="{{ 'Anterior' | translate }}" role="button" tabindex="0">
+                        <svg class="icon-inline icon-lg icon-flip-horizontal" aria-hidden="true"><use xlink:href="#chevron"/></svg>
                     </div>
-                    <div class="js-swiper-{{ section_id }}-next swiper-button-next swiper-button-outside d-none d-md-block svg-icon-text">
-                        <svg class="icon-inline icon-lg"><use xlink:href="#chevron"/></svg>
+                    <div class="js-swiper-{{ section_id }}-next swiper-button-next swiper-button-outside d-none d-md-block svg-icon-text" aria-label="{{ 'Próxima' | translate }}" role="button" tabindex="0">
+                        <svg class="icon-inline icon-lg" aria-hidden="true"><use xlink:href="#chevron"/></svg>
                     </div>
                 {% endif %}
             {% endif %}

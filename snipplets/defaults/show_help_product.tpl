@@ -176,11 +176,11 @@
                 {% include 'snipplets/defaults/help_item.tpl' with {'slide_item': true, 'help_item_7': true}  %}
             </div>
         </div>
-        <div class="js-swiper-related-prev-demo swiper-button-prev swiper-button-outside d-none d-md-block svg-icon-text">
-            <svg class="icon-inline icon-lg icon-flip-horizontal"><use xlink:href="#chevron"/></svg>
+        <div class="js-swiper-related-prev-demo swiper-button-prev swiper-button-outside d-none d-md-block svg-icon-text" aria-label="{{ 'Anterior' | translate }}" role="button" tabindex="0">
+            <svg class="icon-inline icon-lg icon-flip-horizontal" aria-hidden="true"><use xlink:href="#chevron"/></svg>
         </div>
-        <div class="js-swiper-related-next-demo swiper-button-next swiper-button-outside d-none d-md-block svg-icon-text">
-            <svg class="icon-inline icon-lg"><use xlink:href="#chevron"/></svg>
+        <div class="js-swiper-related-next-demo swiper-button-next swiper-button-outside d-none d-md-block svg-icon-text" aria-label="{{ 'Próxima' | translate }}" role="button" tabindex="0">
+            <svg class="icon-inline icon-lg" aria-hidden="true"><use xlink:href="#chevron"/></svg>
         </div>
     </div>
 </section>

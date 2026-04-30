@@ -25,11 +25,11 @@
 				</div>
 			{% if settings.brands_format == 'slider' %}
 					</div>
-					<div class="js-swiper-brands-prev swiper-button-prev swiper-button-outside svg-icon-text">
-						<svg class="icon-inline icon-lg icon-flip-horizontal"><use xlink:href="#chevron"/></svg>
+					<div class="js-swiper-brands-prev swiper-button-prev swiper-button-outside svg-icon-text" aria-label="{{ 'Anterior' | translate }}" role="button" tabindex="0">
+						<svg class="icon-inline icon-lg icon-flip-horizontal" aria-hidden="true"><use xlink:href="#chevron"/></svg>
 					</div>
-					<div class="js-swiper-brands-next swiper-button-next swiper-button-outside svg-icon-text">
-						<svg class="icon-inline icon-lg"><use xlink:href="#chevron"/></svg>
+					<div class="js-swiper-brands-next swiper-button-next swiper-button-outside svg-icon-text" aria-label="{{ 'Próxima' | translate }}" role="button" tabindex="0">
+						<svg class="icon-inline icon-lg" aria-hidden="true"><use xlink:href="#chevron"/></svg>
 					</div>
 				</div>
 			{% endif %}

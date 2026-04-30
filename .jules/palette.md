@@ -1,16 +1,7 @@
+## 2024-04-30 - Swiper Control Accessibility Pattern
+**Learning:** Found a recurring accessibility issue pattern specific to this app's Swiper components: icon-only `div` elements used as slider controls (`swiper-button-prev`/`next`) lack `role="button"`, `tabindex="0"`, and `aria-label`s, making them invisible to screen readers and unreachable via keyboard navigation.
+**Action:** Always add `role="button"`, `tabindex="0"`, `aria-label="{{ 'Anterior' | translate }}"` / `{{ 'Próxima' | translate }}"`, and `aria-hidden="true"` on the inner SVG for all custom slider controls across the theme.
 
-## 2025-03-31 - Add ARIA Labels to Quantity Buttons
-**Learning:** Found that custom quantity increment/decrement controls embedded in TiendaNube Twig templates (`.tpl`) lack proper accessible names and roles by default, making them unreadable to screen readers.
-**Action:** When working on similar custom form controls, specifically those using spans and icon SVGs to act as buttons, always inject `role="button"` and translated `aria-label` attributes to ensure they are keyboard/screen reader accessible without breaking existing visual styling or JavaScript event listeners.
-## 2024-05-27 - Icon-only Div Buttons require ARIA context
-**Learning:** In TiendaNube `.tpl` themes, slider controls (like `js-swiper-product-thumbs-prev`) are often implemented using `<div>` elements containing only an `<svg>` icon without any accessible text or interactive roles.
-**Action:** Always add `role="button"`, `tabindex="0"`, and `aria-label="{{ 'Text' | translate }}"` to the container `div`, and `aria-hidden="true"` to the inner SVG to ensure these custom icon-only controls are perceivable and operable by screen readers and keyboard users.
-## 05-04-2025 - Icon-only Anchor Modal Controls require ARIA context
-**Learning:** Found that custom modal close controls embedded in TiendaNube Twig templates (`.tpl`) across various template files lack proper accessible names. They rely entirely on SVG icons without visible text.
-**Action:** When working on similar custom modal controls, specifically those using anchor `<a>` tags and icon SVGs to act as buttons, always inject `role="button"` and translated `aria-label` attributes to ensure they are keyboard and screen reader accessible without breaking existing visual styling or JavaScript event listeners.
-## 2025-04-03 - Use local HTML stubs for Playwright testing of Twig templates
-**Learning:** Playwright cannot directly render `.tpl` files containing Twig tags (like `{{ 'Text' | translate }}`), as the uncompiled template tags break the DOM parser and test assertions.
-**Action:** When using Playwright to visually verify isolated snippet changes in `.tpl` Twig files, bypass Twig parsing issues by creating a local HTML stub (e.g., `test.html`) that embeds the modified HTML snippet, and load it in Playwright via `page.goto('file:///...')`.
-## 10-04-2026 - [Responsive grid overlap fix for product gallery]
-**Learning:** Using fixed pixel widths for inner containers inside percentage-based bootstrap grid columns causes overflow and overlaps on intermediate screen resolutions (e.g., tablets).
-**Action:** Use `width: 100%; max-width: 120px;` for inner elements and percentage padding for relative spacing instead of fixed pixel paddings.
+## 2024-04-30 - Swiper Control Accessibility Pattern
+**Learning:** Found a recurring accessibility issue pattern specific to this app's Swiper components: icon-only `div` elements used as slider controls (`swiper-button-prev`/`next`) lack `role="button"`, `tabindex="0"`, and `aria-label`s, making them invisible to screen readers and unreachable via keyboard navigation.
+**Action:** Always add `role="button"`, `tabindex="0"`, `aria-label="{{ 'Anterior' | translate }}"` / `{{ 'Próxima' | translate }}"`, and `aria-hidden="true"` on the inner SVG for all custom slider controls across the theme.
