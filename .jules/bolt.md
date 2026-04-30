@@ -5,7 +5,7 @@
 **Action:** Always prefer `IntersectionObserver` over scroll events and `getBoundingClientRect()` for visibility detection. It runs off the main thread and provides a much more performant way to know when elements enter the viewport.
 =======
 
-## $(date +%Y-%m-%d) - IntersectionObserver replacing Scroll Events
+## 2026-04-30 - IntersectionObserver replacing Scroll Events
 **Learning:** Found a scroll event listener using `getBoundingClientRect()` to trigger lazy loading. In modern browsers, this severely blocks the main thread and causes layout thrashing (forced synchronous layout). Replacing it with `IntersectionObserver` handles this asynchronously, offering huge performance gains on scroll-heavy frontend pages.
 **Action:** When implementing or debugging scroll-based frontend logic (like lazy loading images/videos or sticky headers), prefer `IntersectionObserver` instead of manual scroll listeners with boundary checking.
 >>>>>>> origin/bolt-intersection-observer-18396028972581411862
@@ -19,7 +19,7 @@
 **Learning:** In sliders with videos (`js-section-video-products`), querying the global DOM (e.g., `document.querySelectorAll`) inside Swiper callbacks (`slideChange`) is very expensive. Furthermore, attaching `timeupdate` and `ended` listeners to elements repeatedly without a guard causes significant memory leaks and duplicate handler executions.
 **Action:** Always cache slider-specific DOM nodes (like `this.allVideos`) inside the `init` event, and access active/next slides using Swiper's internal array (`this.slides[this.activeIndex]`). Use a `dataset` attribute (e.g., `dataset.progressInitialized`) as a guard to ensure event listeners are attached only once.
 
-## $(date +%Y-%m-%d) - Prevent IntersectionObserver memory leaks inside resize handlers
+## 2026-04-30 - Prevent IntersectionObserver memory leaks inside resize handlers
 **Learning:** Initializing an `IntersectionObserver` within a `resize` event handler without disconnecting the previous instance causes severe memory leaks. On mobile devices, `resize` events fire frequently (e.g., when the browser's address bar collapses/expands), creating multiple orphaned observers that degrade scrolling performance.
 **Action:** When initializing `IntersectionObserver` within event handlers that trigger frequently (like `resize`), you must store the observer instance in a higher scope and explicitly call `.disconnect()` before re-initializing it to prevent memory leaks and duplicate executions.
 ## 2026-04-11 - Optimize Scroll Listeners
@@ -29,3 +29,6 @@
 ## 2024-05-24 - Optimize Scroll Listeners
 **Learning:** Un-optimized scroll events that repeatedly query the DOM and lack state tracking cause excessive reflows and block the main thread.
 **Action:** Always add state tracking variables, cache DOM nodes outside the listener, and use the `{ passive: true }` option for scroll events.
+## 2026-04-30 - Reused single IntersectionObserver for multiple elements
+**Learning:** Creating a new `IntersectionObserver` instance for every single element in a list creates excessive concurrent observers, degrading performance.
+**Action:** Always instantiate a single `IntersectionObserver` outside the loop, reuse it, and explicitly call `observer.unobserve(element)` once resolved.

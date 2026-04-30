@@ -549,19 +549,20 @@ DOMContentLoaded.addEventOrExecute(() => {
 
     const inViewport = (entries, observer) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting && !entry.target.observed) {
+        if (entry.isIntersecting) {
           entry.target.classList.add("is-inViewport");
-          entry.target.observed = true;
+          // Performance: Unobserve once the transition class is added
+          observer.unobserve(entry.target);
         }
       });
     };
 
     // Attach observer to every [data-transition] element:
     const ELs_inViewport = document.querySelectorAll('[data-transition]');
+    // Performance: Instantiate a single IntersectionObserver outside the loop
+    const transitionObserver = new IntersectionObserver(inViewport);
     ELs_inViewport.forEach(EL => {
-      EL.observed = false; // Initialize the observed flag for each element
-      const Obs = new IntersectionObserver(inViewport);
-      Obs.observe(EL);
+      transitionObserver.observe(EL);
     });
 
     applyMarqueeAnimation = function(marqueeSelector, textSelector){
