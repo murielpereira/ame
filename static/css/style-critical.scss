@@ -3996,13 +3996,9 @@ textarea.form-control {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-width: 120px;
     text-decoration: none;
     padding: 6px;
-}
-
-.ads-bar-item:nth-child(n + 2):nth-child(-n + 4), .ads-bar-item > a:nth-child(n + 2):nth-child(-n + 4) {
-    margin-left: -25px;
+    width: 100%;
 }
 
 .ads-bar-item-img {
