@@ -1,0 +1,3 @@
+## $(date +%Y-%m-%d) - Fixed horizontal overflow on ads-bar component on mobile breakpoints
+**Learning:** Found that applying fixed `min-width` coupled with negative margins (`margin-left: -25px`) to create overlapping flex items inside a fluid container can cause severe horizontal overflow and break layout constraints on narrow screens when elements begin to wrap or squish.
+**Action:** When designing overlapping flex items, prefer using standard CSS grid overlapping or flex distribution with `width: 100%` on the individual items under mobile media queries to ensure they break naturally instead of forcing rigid horizontal boundaries.
