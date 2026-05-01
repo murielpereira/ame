@@ -16,7 +16,7 @@
 	<div class="row justify-content-center align-items-center mt-5">
 		{% if pages.numbers %}
 			<div class="col-auto">
-				<a {% if pages.previous %}href="{{ pages.previous }}"{% endif %} class="swiper-button-prev {% if not pages.previous %}opacity-30 disabled{% endif %}">
+				<a {% if pages.previous %}href="{{ pages.previous }}"{% endif %} class="swiper-button-prev {% if not pages.previous %}opacity-30 disabled{% endif %}" aria-label="{{ 'Anterior' | translate }}">
 					<svg class="icon-inline icon-flip-horizontal"><use xlink:href="#chevron"/></svg>
 				</a>
 			</div>
@@ -32,7 +32,7 @@
 				</div>
 			</div>
 			<div class="col-auto">
-				<a {% if pages.next %}href="{{ pages.next }}"{% endif %} class="swiper-button-next {% if not pages.next %}opacity-30 disabled{% endif %}">
+				<a {% if pages.next %}href="{{ pages.next }}"{% endif %} class="swiper-button-next {% if not pages.next %}opacity-30 disabled{% endif %}" aria-label="{{ 'Próxima' | translate }}">
 					<svg class="icon-inline"><use xlink:href="#chevron"/></svg>
 				</a>
 			</div>

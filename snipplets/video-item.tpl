@@ -10,13 +10,13 @@
 
 					{# Open modal in mobile with product video inside #}
 
-					<a href="#product-video-modal" data-fancybox="product-gallery" class="js-play-button video-player d-block d-md-none">
+					<a href="#product-video-modal" data-fancybox="product-gallery" class="js-play-button video-player d-block d-md-none" aria-label="{{ 'Reproducir video' | translate }}">
 						<div class="video-player-icon">
 							<svg class="icon-inline icon-3x svg-icon-text"><use xlink:href="#play"/></svg>
 						</div>
 					</a>
 				{% endif %}
-				<a href="javascript:void(0)" class="js-play-button video-player {% if product_modal_trigger %}d-none d-md-block{% endif %}">
+				<a href="javascript:void(0)" class="js-play-button video-player {% if product_modal_trigger %}d-none d-md-block{% endif %}" aria-label="{{ 'Reproducir video' | translate }}">
 			{% endif %}
 					<div class="video-player-icon {% if thumb %}video-player-icon-small{% endif %}">
 						<svg class="icon-inline icon-2x svg-icon-text"><use xlink:href="#play"/></svg>
