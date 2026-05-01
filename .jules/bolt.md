@@ -32,3 +32,7 @@
 ## 2026-04-30 - Reused single IntersectionObserver for multiple elements
 **Learning:** Creating a new `IntersectionObserver` instance for every single element in a list creates excessive concurrent observers, degrading performance.
 **Action:** Always instantiate a single `IntersectionObserver` outside the loop, reuse it, and explicitly call `observer.unobserve(element)` once resolved.
+
+## 2024-05-24 - Layout Thrashing in Scroll Listeners
+**Learning:** Querying DOM properties like `.outerHeight()` inside an un-throttled scroll event listener, and repeatedly querying the same DOM elements (e.g., `jQueryNuvem(".js-head-main")`) on every scroll tick causes significant layout thrashing.
+**Action:** Always cache DOM elements outside of scroll listeners, and throttle execution using `requestAnimationFrame` to align DOM reads/writes with the browser's render cycle.
