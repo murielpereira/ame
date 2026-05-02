@@ -3795,8 +3795,11 @@ DOMContentLoaded.addEventOrExecute(() => {
         }     
 
         // Fechar modal ao clicar no botão X
-        jQueryNuvem('.lb-showcase-videos-modal-close').on('click', function() {
-            closeVideoModal();
+        jQueryNuvem('.lb-showcase-videos-modal-close').on('click keydown', function(e) {
+            if (e.type === 'click' || e.key === 'Enter' || e.key === ' ') {
+                if (e.key === ' ') e.preventDefault();
+                closeVideoModal();
+            }
         });
         
         // Fechar modal ao clicar fora ou com ESC
