@@ -3798,6 +3798,13 @@ DOMContentLoaded.addEventOrExecute(() => {
         jQueryNuvem('.lb-showcase-videos-modal-close').on('click', function() {
             closeVideoModal();
         });
+
+        jQueryNuvem('.lb-showcase-videos-modal-close').on('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                if (e.key === ' ') e.preventDefault();
+                closeVideoModal();
+            }
+        });
         
         // Fechar modal ao clicar fora ou com ESC
         jQueryNuvem('.lb-showcase-videos-modal').on('click', function(e) {
