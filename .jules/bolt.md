@@ -32,3 +32,6 @@
 ## 2026-04-30 - Reused single IntersectionObserver for multiple elements
 **Learning:** Creating a new `IntersectionObserver` instance for every single element in a list creates excessive concurrent observers, degrading performance.
 **Action:** Always instantiate a single `IntersectionObserver` outside the loop, reuse it, and explicitly call `observer.unobserve(element)` once resolved.
+## $(date +%Y-%m-%d) - Throttle window.onScroll for header compression
+**Learning:** The existing codebase attached an unthrottled `scroll` event listener to compress the header (`$headerMain.addClass('compress')`). Because scroll events fire extremely rapidly, running layout queries (`$headerMain[0].offsetHeight`) and style modifications synchronously during scrolling causes main-thread blocking and layout thrashing, hurting Interaction to Next Paint (INP) and general perceived scrolling smoothness.
+**Action:** When forced to use a `scroll` event listener instead of an `IntersectionObserver` (due to complex positioning logic tied to raw `pageYOffset`), always wrap the callback logic in `window.requestAnimationFrame()` and guard it with a boolean ticking flag (`let scrollTicking = false`) to ensure DOM updates are paced optimally with the browser's refresh rate.

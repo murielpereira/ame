@@ -864,12 +864,14 @@ DOMContentLoaded.addEventOrExecute(() => {
         var headerIsCompressed = false;
         var $headerMain = jQueryNuvem(".js-head-main");
         if ($headerMain.length > 0) {
+            let scrollTicking = false;
             window.addEventListener("scroll", function() {
+                if (!scrollTicking) {
+                    window.requestAnimationFrame(function() {
+                        var scrolledPosition = window.pageYOffset;
 
-                var scrolledPosition = window.pageYOffset;
-
-                var header = $headerMain;
-                var navbarHeight = $headerMain[0].offsetHeight;
+                        var header = $headerMain;
+                        var navbarHeight = $headerMain[0].offsetHeight;
 
             {# Recalculate topbar height in case image has not loaded yet and result is 0 #}
 
@@ -912,8 +914,12 @@ DOMContentLoaded.addEventOrExecute(() => {
                     headerIsCompressed = false;
                 }
             }
-        }, { passive: true });
+            scrollTicking = false;
+        });
+        scrollTicking = true;
         }
+    }, { passive: true });
+    }
         
     {% if has_only_mobile_with_fixed_nav %}
         }
