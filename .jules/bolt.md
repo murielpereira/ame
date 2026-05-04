@@ -32,3 +32,6 @@
 ## 2026-04-30 - Reused single IntersectionObserver for multiple elements
 **Learning:** Creating a new `IntersectionObserver` instance for every single element in a list creates excessive concurrent observers, degrading performance.
 **Action:** Always instantiate a single `IntersectionObserver` outside the loop, reuse it, and explicitly call `observer.unobserve(element)` once resolved.
+## 2024-05-23 - Throttling Scroll Event Listeners with requestAnimationFrame
+**Learning:** Adding `{ passive: true }` to scroll event listeners is good for preventing scroll blocking, but it doesn't prevent main-thread layout thrashing if the listener callback triggers expensive DOM manipulations or layout reads (like `offsetHeight`) frequently during the scroll.
+**Action:** When optimizing unavoidable scroll event listeners, implement state tracking variables (e.g., `ticking` flags) to ensure DOM updates only occur on actual state changes. Use `requestAnimationFrame` to throttle the execution of the callback, preventing main-thread layout thrashing without breaking responsive dynamic updates. Also, cache DOM element references outside the listener.

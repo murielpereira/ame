@@ -209,17 +209,24 @@ DOMContentLoaded.addEventOrExecute(() => {
 
             !function () {
                 var isNotificationFixed = false;
+                var notificationTicking = false;
                 window.addEventListener("scroll", function (e) {
-                    if (window.pageYOffset == 0) {
-                        if (isNotificationFixed) {
-                            $addedToCartNotification.css("top" , fixedNotificationPosition.toString() + 'px');
-                            isNotificationFixed = false;
-                        }
-                    } else {
-                        if (!isNotificationFixed) {
-                            $addedToCartNotification.css("top" , "30px");
-                            isNotificationFixed = true;
-                        }
+                    if (!notificationTicking) {
+                        window.requestAnimationFrame(function() {
+                            if (window.pageYOffset == 0) {
+                                if (isNotificationFixed) {
+                                    $addedToCartNotification.css("top" , fixedNotificationPosition.toString() + 'px');
+                                    isNotificationFixed = false;
+                                }
+                            } else {
+                                if (!isNotificationFixed) {
+                                    $addedToCartNotification.css("top" , "30px");
+                                    isNotificationFixed = true;
+                                }
+                            }
+                            notificationTicking = false;
+                        });
+                        notificationTicking = true;
                     }
                 }, { passive: true });
             }();
@@ -718,27 +725,34 @@ DOMContentLoaded.addEventOrExecute(() => {
     var isNavArrowRightDisabled = null;
 
     if ($navDesktopList.length > 0) {
+        var navDesktopListTicking = false;
         $navDesktopList[0].addEventListener("scroll", function() {
-            var position = $navDesktopList[0].scrollLeft;
-            var shouldDisableLeft = (position === 0);
+            if (!navDesktopListTicking) {
+                window.requestAnimationFrame(function() {
+                    var position = $navDesktopList[0].scrollLeft;
+                    var shouldDisableLeft = (position === 0);
 
-            if(shouldDisableLeft !== isNavArrowLeftDisabled) {
-                if(shouldDisableLeft) {
-                    $navArrowLeft.addClass('disable');
-                } else {
-                    $navArrowLeft.removeClass('disable');
-                }
-                isNavArrowLeftDisabled = shouldDisableLeft;
-            }
+                    if(shouldDisableLeft !== isNavArrowLeftDisabled) {
+                        if(shouldDisableLeft) {
+                            $navArrowLeft.addClass('disable');
+                        } else {
+                            $navArrowLeft.removeClass('disable');
+                        }
+                        isNavArrowLeftDisabled = shouldDisableLeft;
+                    }
 
-            var shouldDisableRight = (Math.ceil(position) >= (menuItems - menuContainer));
-            if(shouldDisableRight !== isNavArrowRightDisabled) {
-                if(shouldDisableRight) {
-                    $navArrowRight.addClass('disable');
-                } else {
-                    $navArrowRight.removeClass('disable');
-                }
-                isNavArrowRightDisabled = shouldDisableRight;
+                    var shouldDisableRight = (Math.ceil(position) >= (menuItems - menuContainer));
+                    if(shouldDisableRight !== isNavArrowRightDisabled) {
+                        if(shouldDisableRight) {
+                            $navArrowRight.addClass('disable');
+                        } else {
+                            $navArrowRight.removeClass('disable');
+                        }
+                        isNavArrowRightDisabled = shouldDisableRight;
+                    }
+                    navDesktopListTicking = false;
+                });
+                navDesktopListTicking = true;
             }
         }, { passive: true });
     }
@@ -864,55 +878,61 @@ DOMContentLoaded.addEventOrExecute(() => {
         var headerIsCompressed = false;
         var $headerMain = jQueryNuvem(".js-head-main");
         if ($headerMain.length > 0) {
+            var headerScrollTicking = false;
             window.addEventListener("scroll", function() {
+                if (!headerScrollTicking) {
+                    window.requestAnimationFrame(function() {
+                        var scrolledPosition = window.pageYOffset;
 
-                var scrolledPosition = window.pageYOffset;
+                        var header = $headerMain;
+                        var navbarHeight = $headerMain[0].offsetHeight;
 
-                var header = $headerMain;
-                var navbarHeight = $headerMain[0].offsetHeight;
+                    {# Recalculate topbar height in case image has not loaded yet and result is 0 #}
 
-            {# Recalculate topbar height in case image has not loaded yet and result is 0 #}
+                    {% if adbarWithoutMessages %}
+                        {% if adbarImageMobileOnly %}
+                            if (window.innerWidth < 768) {
+                        {% elseif adbarImageDesktopOnly %}
+                            if (window.innerWidth > 768) {
+                        {% endif %}
+                                if (topbarHeight == 0) {
+                                    topbarHeight = jQueryNuvem(".js-topbar").outerHeight();
+                                }
+                        {% if adbarImageMobileOnly or adbarImageDesktopOnly %}
+                            }
+                        {% endif %}
+                    {% endif %}
 
-            {% if adbarWithoutMessages %}
-                {% if adbarImageMobileOnly %}
-                    if (window.innerWidth < 768) {
-                {% elseif adbarImageDesktopOnly %}
-                    if (window.innerWidth > 768) {
-                {% endif %}
-                        if (topbarHeight == 0) {
-                            topbarHeight = jQueryNuvem(".js-topbar").outerHeight();
+                    if (scrolledPosition > navbarHeight) {
+                        if (!headerIsCompressed) {
+                            header.addClass('compress').css('top', -topbarHeight + 'px' );
+                            {% if template == 'category' %}
+                                if (window.innerWidth < 768) {
+                                    setTimeout(function(){
+                                        offsetCategories();
+                                    },300);
+                                }
+                            {% endif %}
+                            headerIsCompressed = true;
                         }
-                {% if adbarImageMobileOnly or adbarImageDesktopOnly %}
+                    } else {
+                        if (headerIsCompressed !== false) {
+                            header.removeClass('compress').css("top", "0px");
+                            {% if template == 'category' %}
+                                if (window.innerWidth < 768) {
+                                    setTimeout(function(){
+                                        offsetCategories();
+                                    },300);
+                                }
+                            {% endif %}
+                            headerIsCompressed = false;
+                        }
                     }
-                {% endif %}
-            {% endif %}
-
-            if (scrolledPosition > navbarHeight) {
-                if (!headerIsCompressed) {
-                    header.addClass('compress').css('top', -topbarHeight + 'px' );
-                    {% if template == 'category' %}
-                        if (window.innerWidth < 768) {
-                            setTimeout(function(){
-                                offsetCategories();
-                            },300);
-                        }
-                    {% endif %}
-                    headerIsCompressed = true;
+                        headerScrollTicking = false;
+                    });
+                    headerScrollTicking = true;
                 }
-            } else {
-                if (headerIsCompressed !== false) {
-                    header.removeClass('compress').css("top", "0px");
-                    {% if template == 'category' %}
-                        if (window.innerWidth < 768) {
-                            setTimeout(function(){
-                                offsetCategories();
-                            },300);
-                        }
-                    {% endif %}
-                    headerIsCompressed = false;
-                }
-            }
-        }, { passive: true });
+            }, { passive: true });
         }
         
     {% if has_only_mobile_with_fixed_nav %}
@@ -2031,12 +2051,13 @@ DOMContentLoaded.addEventOrExecute(() => {
                 observer.observe(document.querySelector(".js-category-controls-prev"));
 
                 var lastCategoriesOffsetValue = null;
+                var $sticky_category_controls = jQueryNuvem(".js-category-controls");
+                var $head_main = jQueryNuvem(".js-head-main");
+
                 offsetCategories = function() {
-                    var $sticky_category_controls = jQueryNuvem(".js-category-controls");
+                    var categoriesOffset = $head_main.outerHeight();
 
-                    var categoriesOffset = jQueryNuvem(".js-head-main").outerHeight();
-
-                    if(jQueryNuvem(".js-head-main").hasClass("compress")){
+                    if($head_main.hasClass("compress")){
                         var categoriesOffset = categoriesOffset - topbarHeight - 1;
                     }
 
@@ -2048,8 +2069,15 @@ DOMContentLoaded.addEventOrExecute(() => {
 
                 offsetCategories();
 
+                var offsetCategoriesTicking = false;
                 document.addEventListener("scroll", function(){
-                    offsetCategories();
+                    if (!offsetCategoriesTicking) {
+                        window.requestAnimationFrame(function() {
+                            offsetCategories();
+                            offsetCategoriesTicking = false;
+                        });
+                        offsetCategoriesTicking = true;
+                    }
                 }, { passive: true });
 
             }
