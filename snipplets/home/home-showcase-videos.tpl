@@ -27,9 +27,9 @@
                             {% set video_url = 'VIDEOS/' ~ video_url %}
                             <div class="swiper-slide" id="video-{{ video_index }}" data-index="{{ loop.index }}" data-store="home-video-product-{{ video_index }}">
                                 <div class="lb-showcase-video-item">
-                                    <button class="js-lb-showcase-video-play-button lb-showcase-video-play-button" aria-label="Play no vídeo">
+                                    <button class="js-lb-showcase-video-play-button lb-showcase-video-play-button" aria-label="{{ 'Reproducir video' | translate }}">
                                         <span class="lb-showcase-video-play-button-icon">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.7524 10.0499L3.86361 0.306386C2.30743 -0.489961 0 0.306386 0 2.22699V21.7141C0 23.4941 2.14645 24.5715 3.86361 23.6815L22.7524 13.938C24.4159 13.0479 24.4159 10.94 22.7524 10.0499Z" fill="#FCFCFC"></path></svg>
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M22.7524 10.0499L3.86361 0.306386C2.30743 -0.489961 0 0.306386 0 2.22699V21.7141C0 23.4941 2.14645 24.5715 3.86361 23.6815L22.7524 13.938C24.4159 13.0479 24.4159 10.94 22.7524 10.0499Z" fill="#FCFCFC"></path></svg>
                                         </span>
                                     </button>
                                     <div class="lb-showcase-video-item-video">
@@ -70,8 +70,8 @@
 </section>
 
 <div class="lb-showcase-videos-modal" style="display: none;">
-    <div class="lb-showcase-videos-modal-close">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div class="lb-showcase-videos-modal-close" role="button" tabindex="0" aria-label="{{ 'Cerrar' | translate }}">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M18 6L6 18M6 6L18 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
     </div>
