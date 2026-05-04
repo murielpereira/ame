@@ -46,8 +46,7 @@
 {% endif %}
 
 {# Ajuste 2: Adicionamos display flex e flex-direction column diretamente na raiz do item para garantir altura igual #}
-{# Slide items must NOT receive Bootstrap col-* (flex-basis: 100%/50%) — that overrides the inline width Swiper calculates from slidesPerView, locking each slide to the full container and breaking the swipe. Apply col-* only in grid mode. #}
-<div class="js-item-product{% if not video_mode %}{% if slide_item %} js-item-slide swiper-slide{% else %} col-{% if columns_mobile == 1 %}12{% else %}6{% endif %} col-md-{% if columns_desktop == 4 %}3{% elseif columns_desktop == 5 %}2-4{% else %}2{% endif %}{% endif %} item-product col-grid{% else %} w-100{% endif %}" data-product-type="list" data-product-id="{{ product.id }}" data-store="product-item-{{ product.id }}" data-component="product-list-item" data-component-value="{{ product.id }}" style="{% if hide_product and not video_mode %}display: none;{% else %}display: flex; flex-direction: column; height: auto;{% endif %}">
+<div class="js-item-product{% if not video_mode %}{% if slide_item %} js-item-slide swiper-slide{% endif %} col-{% if columns_mobile == 1 %}12{% else %}6{% endif %} col-md-{% if columns_desktop == 4 %}3{% elseif columns_desktop == 5 %}2-4{% else %}2{% endif %} item-product col-grid{% else %} w-100{% endif %}" data-product-type="list" data-product-id="{{ product.id }}" data-store="product-item-{{ product.id }}" data-component="product-list-item" data-component-value="{{ product.id }}" style="{% if hide_product and not video_mode %}display: none;{% else %}display: flex; flex-direction: column; height: auto;{% endif %}">
     
     {# ALINHAMENTO BOTÕES: .item transformado em coluna flexível com flex-grow para preencher o espaço total #}
     <div class="item" style="display: flex; flex-direction: column; flex-grow: 1; height: 100%; width: 100%;">

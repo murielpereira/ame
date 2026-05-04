@@ -3973,7 +3973,7 @@ textarea.form-control {
 }
 
 @media (max-width: 1300px) {
-    
+
     .container-ads-bar {
     display: flex;
     background: #e8e3df;
@@ -3999,6 +3999,27 @@ textarea.form-control {
     padding: 6px;
     width: 100%;
 }
+}
+
+/* Mobile: wrap into 3 rows of 2 items instead of horizontal scroll. */
+@media (max-width: 767px) {
+    .container-ads-bar {
+        flex-wrap: wrap;
+        overflow: visible;
+        padding: 4px 0;
+    }
+    .ads-bar-item {
+        flex: 0 0 50%;
+        max-width: 50%;
+        width: auto;
+    }
+    .ads-bar-item a {
+        width: 100%;
+    }
+}
+
+@media (max-width: 1300px) {
+    /* Reopened so the rules below stay scoped to the original tablet+mobile range */
 
 .ads-bar-item-img {
     padding: 3px;

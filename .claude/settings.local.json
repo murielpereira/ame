@@ -12,7 +12,18 @@
       "Bash(node -e \"const fs=require\\('fs'\\); let c=fs.readFileSync\\('/tmp/store-orig.js','utf8'\\); c=c.replace\\(/\\\\{#[\\\\s\\\\S]*?#\\\\}/g,''\\); c=c.replace\\(/\\\\{\\\\{[\\\\s\\\\S]*?\\\\}\\\\}/g,'\\\\\"\\\\\"'\\); c=c.replace\\(/\\\\{%[\\\\s\\\\S]*?%\\\\}/g,''\\); try{new Function\\(c\\); console.log\\('HEAD Syntax OK'\\);}catch\\(e\\){console.error\\('HEAD Syntax error:', e.message\\);}\")",
       "Bash(git stash *)",
       "Bash(node -e \"const fs=require\\('fs'\\); let c=fs.readFileSync\\('./static/js/store.js.tpl','utf8'\\); c=c.replace\\(/\\\\{#[\\\\s\\\\S]*?#\\\\}/g,''\\); c=c.replace\\(/\\\\{\\\\{[\\\\s\\\\S]*?\\\\}\\\\}/g,'\\\\\"\\\\\"'\\); c=c.replace\\(/\\\\{%[\\\\s\\\\S]*?%\\\\}/g,''\\); try{new Function\\(c\\); console.log\\('HEAD Syntax OK'\\);}catch\\(e\\){console.error\\('HEAD Syntax error:', e.message\\);}\")",
-      "Bash(git -C \"c:/Users/pedid/OneDrive/Área de Trabalho/Arquivos Âme/Muriel/Código Nuvem\" diff --stat)"
+      "Bash(git -C \"c:/Users/pedid/OneDrive/Área de Trabalho/Arquivos Âme/Muriel/Código Nuvem\" diff --stat)",
+      "Bash(git -C \"c:/Users/pedid/OneDrive/Área de Trabalho/Arquivos Âme/Muriel/Código Nuvem\" log --oneline --all -S \"limiter && input\")",
+      "Bash(git -C \"c:/Users/pedid/OneDrive/Área de Trabalho/Arquivos Âme/Muriel/Código Nuvem\" log --oneline d4bc824 ^d4bc824~ --no-merges)",
+      "Bash(git -C \"c:/Users/pedid/OneDrive/Área de Trabalho/Arquivos Âme/Muriel/Código Nuvem\" branch --contains d4bc824)",
+      "Bash(git -C \"c:/Users/pedid/OneDrive/Área de Trabalho/Arquivos Âme/Muriel/Código Nuvem\" log --oneline -15)",
+      "Bash(git -C \"c:/Users/pedid/OneDrive/Área de Trabalho/Arquivos Âme/Muriel/Código Nuvem\" show --stat bc4e894)",
+      "Bash(git -C \"c:/Users/pedid/OneDrive/Área de Trabalho/Arquivos Âme/Muriel/Código Nuvem\" show bc4e894 -- static/css/style-critical.scss)",
+      "Bash(git -C \"c:/Users/pedid/OneDrive/Área de Trabalho/Arquivos Âme/Muriel/Código Nuvem\" log --oneline --all -25)",
+      "Bash(git -C \"c:/Users/pedid/OneDrive/Área de Trabalho/Arquivos Âme/Muriel/Código Nuvem\" show f38c902 -- static/js/store.js.tpl)",
+      "Bash(git -C \"c:/Users/pedid/OneDrive/Área de Trabalho/Arquivos Âme/Muriel/Código Nuvem\" show 6801fde -- static/js/store.js.tpl)",
+      "Bash(git -C \"c:/Users/pedid/OneDrive/Área de Trabalho/Arquivos Âme/Muriel/Código Nuvem\" diff snipplets/ static/js/store.js.tpl)",
+      "Bash(git -C \"c:/Users/pedid/OneDrive/Área de Trabalho/Arquivos Âme/Muriel/Código Nuvem\" diff static/css/style-critical.scss)"
     ]
   }
 }

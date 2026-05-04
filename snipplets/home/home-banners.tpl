@@ -45,5 +45,5 @@
         {% if has_banner_news %}
             {% include 'snipplets/home/home-banners-grid.tpl' with {'banner_news': true} %}
         {% endif %}
-    </section>
+    </div>
 {% endif %}

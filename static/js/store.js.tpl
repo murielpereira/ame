@@ -2028,7 +2028,11 @@ DOMContentLoaded.addEventOrExecute(() => {
                         $category_controls.removeClass("is-sticky");
                     }, { threshold: [0,1]
                 });
-                observer.observe(document.querySelector(".js-category-controls-prev"));
+                // Guard against missing sentinel element — observer.observe(null) throws.
+                var $categoryControlsPrev = document.querySelector(".js-category-controls-prev");
+                if ($categoryControlsPrev) {
+                    observer.observe($categoryControlsPrev);
+                }
 
                 var lastCategoriesOffsetValue = null;
                 // Performance: Cache DOM queries outside the scroll listener
