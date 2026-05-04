@@ -166,11 +166,11 @@ window.tiendaNubeInstaTheme = (function(jQueryNuvem) {
 					if (window.innerWidth > 768) {
 						// Add previous and next controls
 						$swiperContainer.after(`
-							<div class="js-swiper-${settingSelector}-prev swiper-button-prev swiper-button-outside d-none d-md-block svg-icon-text">
-								<svg class="icon-inline icon-lg icon-flip-horizontal"><use xlink:href="#chevron"/></svg>
+							<div class="js-swiper-${settingSelector}-prev swiper-button-prev swiper-button-outside d-none d-md-block svg-icon-text" role="button" tabindex="0" aria-label="Anterior">
+								<svg class="icon-inline icon-lg icon-flip-horizontal" aria-hidden="true"><use xlink:href="#chevron"/></svg>
 							</div>
-							<div class="js-swiper-${settingSelector}-next swiper-button-next swiper-button-outside d-none d-md-block svg-icon-text">
-								<svg class="icon-inline icon-lg"><use xlink:href="#chevron"/></svg>
+							<div class="js-swiper-${settingSelector}-next swiper-button-next swiper-button-outside d-none d-md-block svg-icon-text" role="button" tabindex="0" aria-label="Próxima">
+								<svg class="icon-inline icon-lg" aria-hidden="true"><use xlink:href="#chevron"/></svg>
 							</div>
 						`);
 					}
@@ -782,11 +782,11 @@ window.tiendaNubeInstaTheme = (function(jQueryNuvem) {
 
 					// Add previous and next controls
 					$bannerContainer.append(`
-						<div class="js-swiper-${bannerPluralName}-prev swiper-button-prev svg-icon-text d-none d-md-block ${swiperArrowClasses}">
-							<svg class="icon-inline icon-lg icon-flip-horizontal"><use xlink:href="#chevron"/></svg>
+						<div class="js-swiper-${bannerPluralName}-prev swiper-button-prev svg-icon-text d-none d-md-block ${swiperArrowClasses}" role="button" tabindex="0" aria-label="Anterior">
+							<svg class="icon-inline icon-lg icon-flip-horizontal" aria-hidden="true"><use xlink:href="#chevron"/></svg>
 						</div>
-						<div class="js-swiper-${bannerPluralName}-next swiper-button-next svg-icon-text d-none d-md-block ${swiperArrowClasses}">
-							<svg class="icon-inline icon-lg"><use xlink:href="#chevron"/></svg>
+						<div class="js-swiper-${bannerPluralName}-next swiper-button-next svg-icon-text d-none d-md-block ${swiperArrowClasses}" role="button" tabindex="0" aria-label="Próxima">
+							<svg class="icon-inline icon-lg" aria-hidden="true"><use xlink:href="#chevron"/></svg>
 						</div>
 					`);
 
