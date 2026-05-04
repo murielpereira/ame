@@ -2031,12 +2031,14 @@ DOMContentLoaded.addEventOrExecute(() => {
                 observer.observe(document.querySelector(".js-category-controls-prev"));
 
                 var lastCategoriesOffsetValue = null;
+                // Performance: Cache DOM queries outside the scroll listener
+                var $sticky_category_controls = jQueryNuvem(".js-category-controls");
+                var $head_main = jQueryNuvem(".js-head-main");
+
                 offsetCategories = function() {
-                    var $sticky_category_controls = jQueryNuvem(".js-category-controls");
+                    var categoriesOffset = $head_main.outerHeight();
 
-                    var categoriesOffset = jQueryNuvem(".js-head-main").outerHeight();
-
-                    if(jQueryNuvem(".js-head-main").hasClass("compress")){
+                    if($head_main.hasClass("compress")){
                         var categoriesOffset = categoriesOffset - topbarHeight - 1;
                     }
 
@@ -2048,8 +2050,16 @@ DOMContentLoaded.addEventOrExecute(() => {
 
                 offsetCategories();
 
+                // Performance: Throttle scroll event with requestAnimationFrame to prevent layout thrashing
+                var isOffsetCategoriesTicking = false;
                 document.addEventListener("scroll", function(){
-                    offsetCategories();
+                    if (!isOffsetCategoriesTicking) {
+                        window.requestAnimationFrame(function() {
+                            offsetCategories();
+                            isOffsetCategoriesTicking = false;
+                        });
+                        isOffsetCategoriesTicking = true;
+                    }
                 }, { passive: true });
 
             }

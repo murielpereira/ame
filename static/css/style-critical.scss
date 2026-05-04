@@ -3983,11 +3983,10 @@ textarea.form-control {
 }
 
 .ads-bar-item:first-child {
-    margin-left: -10px;
+    /* Removed negative margin to fix horizontal overflow on mobile */
 }
 
 .ads-bar-item:last-child {
-    margin-right: 10px;
     padding-right: 0;
 }
 
