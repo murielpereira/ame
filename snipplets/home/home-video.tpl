@@ -7,7 +7,7 @@
         {% endif %}
         <div class="js-home-video-container lazyload home-video embed-responsive embed-responsive-16by9{% if settings.video_vertical_mobile %} embed-responsive-1by1{% endif %} position-relative{% if settings.video_type == 'autoplay' %} home-video-autoplay {% if has_video_text %}home-video-overlay{% endif %}{% endif %}">
             {% if settings.video_type == 'sound' %}
-                <a href="#" class="js-play-button video-player">
+                <a href="#" class="js-play-button video-player" aria-label="{{ 'Reproducir video' | translate }}">
                     <div class="video-player-icon">
                         <svg class="icon-inline icon-3x svg-icon-text"><use xlink:href="#play"/></svg>
                     </div>
