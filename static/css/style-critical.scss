@@ -2840,7 +2840,8 @@ input[type=number] {
 }
 
 .filters-sidebar {
-  width: 280px;
+  width: 100%;
+  max-width: 280px;
 }
 
 .filters-overlay {
@@ -3212,7 +3213,8 @@ textarea.form-control {
 }
 
 .product-thumb {
-  width: 100px;
+  width: 100%;
+  max-width: 100px;
 }
 
 .product-thumb img {
