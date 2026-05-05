@@ -1,0 +1,152 @@
+diff --git a/static/js/store.js.tpl b/static/js/store.js.tpl
+index b204094..cbec028 100644
+--- a/static/js/store.js.tpl
++++ b/static/js/store.js.tpl
+@@ -209,17 +209,25 @@ DOMContentLoaded.addEventOrExecute(() => {
+
+             !function () {
+                 var isNotificationFixed = false;
++                var isNotificationScrollTicking = false;
++                // Performance optimization: Throttle scroll event to prevent layout thrashing
+                 window.addEventListener("scroll", function (e) {
+-                    if (window.pageYOffset == 0) {
+-                        if (isNotificationFixed) {
+-                            $addedToCartNotification.css("top" , fixedNotificationPosition.toString() + 'px');
+-                            isNotificationFixed = false;
+-                        }
+-                    } else {
+-                        if (!isNotificationFixed) {
+-                            $addedToCartNotification.css("top" , "30px");
+-                            isNotificationFixed = true;
+-                        }
++                    if (!isNotificationScrollTicking) {
++                        window.requestAnimationFrame(function() {
++                            if (window.pageYOffset == 0) {
++                                if (isNotificationFixed) {
++                                    $addedToCartNotification.css("top" , fixedNotificationPosition.toString() + 'px');
++                                    isNotificationFixed = false;
++                                }
++                            } else {
++                                if (!isNotificationFixed) {
++                                    $addedToCartNotification.css("top" , "30px");
++                                    isNotificationFixed = true;
++                                }
++                            }
++                            isNotificationScrollTicking = false;
++                        });
++                        isNotificationScrollTicking = true;
+                     }
+                 }, { passive: true });
+             }();
+@@ -859,60 +867,69 @@ DOMContentLoaded.addEventOrExecute(() => {
+         {% set adbarImageDesktopOnly = 'adbar_img_desktop.jpg' | has_custom_image and not 'adbar_img_mobile.jpg' | has_custom_image %}
+         {% set adbarWithoutMessages = settings.ad_bar and not adbarMessages and adbarImagesOnly %}
+
+-        var topbarHeight = jQueryNuvem(".js-topbar").outerHeight();
++        // Performance optimization: Cache DOM queries outside scroll listener
++        var $topbar = jQueryNuvem(".js-topbar");
++        var topbarHeight = $topbar.outerHeight();
+
+         var headerIsCompressed = false;
+         var $headerMain = jQueryNuvem(".js-head-main");
+         if ($headerMain.length > 0) {
++            var isHeaderScrollTicking = false;
++            // Performance optimization: Throttle scroll event to prevent layout thrashing
+             window.addEventListener("scroll", function() {
++                if (!isHeaderScrollTicking) {
++                    window.requestAnimationFrame(function() {
++                        var scrolledPosition = window.pageYOffset;
+
+-                var scrolledPosition = window.pageYOffset;
++                        var header = $headerMain;
++                        var navbarHeight = $headerMain[0].offsetHeight;
+
+-                var header = $headerMain;
+-                var navbarHeight = $headerMain[0].offsetHeight;
++                    {# Recalculate topbar height in case image has not loaded yet and result is 0 #}
+
+-            {# Recalculate topbar height in case image has not loaded yet and result is 0 #}
+-
+-            {% if adbarWithoutMessages %}
+-                {% if adbarImageMobileOnly %}
+-                    if (window.innerWidth < 768) {
+-                {% elseif adbarImageDesktopOnly %}
+-                    if (window.innerWidth > 768) {
+-                {% endif %}
+-                        if (topbarHeight == 0) {
+-                            topbarHeight = jQueryNuvem(".js-topbar").outerHeight();
+-                        }
+-                {% if adbarImageMobileOnly or adbarImageDesktopOnly %}
+-                    }
+-                {% endif %}
+-            {% endif %}
++                    {% if adbarWithoutMessages %}
++                        {% if adbarImageMobileOnly %}
++                            if (window.innerWidth < 768) {
++                        {% elseif adbarImageDesktopOnly %}
++                            if (window.innerWidth > 768) {
++                        {% endif %}
++                                if (topbarHeight == 0) {
++                                    topbarHeight = $topbar.outerHeight();
++                                }
++                        {% if adbarImageMobileOnly or adbarImageDesktopOnly %}
++                            }
++                        {% endif %}
++                    {% endif %}
+
+-            if (scrolledPosition > navbarHeight) {
+-                if (!headerIsCompressed) {
+-                    header.addClass('compress').css('top', -topbarHeight + 'px' );
+-                    {% if template == 'category' %}
+-                        if (window.innerWidth < 768) {
+-                            setTimeout(function(){
+-                                offsetCategories();
+-                            },300);
++                    if (scrolledPosition > navbarHeight) {
++                        if (!headerIsCompressed) {
++                            header.addClass('compress').css('top', -topbarHeight + 'px' );
++                            {% if template == 'category' %}
++                                if (window.innerWidth < 768) {
++                                    setTimeout(function(){
++                                        offsetCategories();
++                                    },300);
++                                }
++                            {% endif %}
++                            headerIsCompressed = true;
+                         }
+-                    {% endif %}
+-                    headerIsCompressed = true;
+-                }
+-            } else {
+-                if (headerIsCompressed !== false) {
+-                    header.removeClass('compress').css("top", "0px");
+-                    {% if template == 'category' %}
+-                        if (window.innerWidth < 768) {
+-                            setTimeout(function(){
+-                                offsetCategories();
+-                            },300);
++                    } else {
++                        if (headerIsCompressed !== false) {
++                            header.removeClass('compress').css("top", "0px");
++                            {% if template == 'category' %}
++                                if (window.innerWidth < 768) {
++                                    setTimeout(function(){
++                                        offsetCategories();
++                                    },300);
++                                }
++                            {% endif %}
++                            headerIsCompressed = false;
+                         }
+-                    {% endif %}
+-                    headerIsCompressed = false;
++                    }
++                        isHeaderScrollTicking = false;
++                    });
++                    isHeaderScrollTicking = true;
+                 }
+-            }
+-        }, { passive: true });
++            }, { passive: true });
+         }
+
+     {% if has_only_mobile_with_fixed_nav %}
