@@ -36,3 +36,6 @@
 ## 2024-05-24 - Layout Thrashing in Scroll Listeners
 **Learning:** Querying DOM properties like `.outerHeight()` inside an un-throttled scroll event listener, and repeatedly querying the same DOM elements (e.g., `jQueryNuvem(".js-head-main")`) on every scroll tick causes significant layout thrashing.
 **Action:** Always cache DOM elements outside of scroll listeners, and throttle execution using `requestAnimationFrame` to align DOM reads/writes with the browser's render cycle.
+## 2024-05-24 - Layout Thrashing in Un-throttled Scroll Listeners
+**Learning:** Adding complex logic and DOM queries to un-throttled scroll event listeners blocks the main thread and forces synchronous layout recalculation, drastically degrading scroll performance (jank).
+**Action:** Always wrap scroll listener logic in `requestAnimationFrame` with a boolean state tracking (`isTicking`), and cache external DOM dependencies outside the scroll listener.
