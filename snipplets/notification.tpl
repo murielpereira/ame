@@ -13,8 +13,8 @@
             <div class="d-flex align-items-center">
                 <div class="col px-0">
                     <a class="mr-4 d-block" href="{{ status_page_url }}"><span class="btn-link font-small">{{ "Seguí acá" | translate }}</span> {{ "tu última compra" | translate }}</a>
-                    <a class="js-notification-close js-notification-status-page-close notification-close" href="#">
-                        <svg class="icon-inline font-body"><use xlink:href="#times"/></svg>
+                    <a class="js-notification-close js-notification-status-page-close notification-close" href="#" role="button" aria-label="{{ 'Cerrar' | translate }}">
+                        <svg class="icon-inline font-body" aria-hidden="true"><use xlink:href="#times"/></svg>
                     </a>
                 </div>
             </div>
@@ -24,8 +24,8 @@
 {% if add_to_cart %}
     <div class="js-alert-added-to-cart notification-floating notification-cart-container notification-hidden notification-fixed position-absolute{% if not settings.head_fix_desktop %} position-fixed-md{% endif %}" style="display: none;">
         <div class="notification notification-primary notification-cart">
-            <div class="js-cart-notification-close notification-close mt-2 mr-1">
-                <svg class="icon-inline icon-lg notification-icon"><use xlink:href="#times"/></svg>
+            <div class="js-cart-notification-close notification-close mt-2 mr-1" role="button" aria-label="{{ 'Cerrar' | translate }}" tabindex="0">
+                <svg class="icon-inline icon-lg notification-icon" aria-hidden="true"><use xlink:href="#times"/></svg>
             </div>
             <div class="js-cart-notification-item row no-gutters" data-store="cart-notification-item">
                 <div class="col-auto pr-0 notification-img">

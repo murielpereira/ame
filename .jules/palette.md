@@ -12,3 +12,6 @@
 ## 2024-05-18 - Icon-Only Anchor Link Accessibility
 **Learning:** In addition to Swiper pagination `<div>`s, icon-only `<a>` tags used for structural controls like `swiper-button-prev`/`next` and generic play buttons (`video-player`) lack screen reader context when they only wrap an inline `<svg>`.
 **Action:** Always add an explicit, localized `aria-label` (e.g., `aria-label="{{ 'Anterior' | translate }}"` or `aria-label="{{ 'Reproducir video' | translate }}"`) to these anchor links to ensure functionality is announced by screen readers.
+## 2024-05-05 - Missing ARIA labels and focusability on icon-only close buttons
+**Learning:** In TiendaNube templates, icon-only dismiss controls (like `js-cart-notification-close` implemented as `div` and `js-notification-status-page-close` implemented as `a` tag) frequently lack semantic accessibility properties, resulting in empty names for screen readers and poor keyboard reachability.
+**Action:** Explicitly add `aria-label` (translated via Twig) and `role="button"` to these controls, `aria-hidden="true"` to inner SVGs, and if the container is non-interactive (like a `div`), attach `tabindex="0"` and a `keydown` listener to handle Enter/Space explicitly.
