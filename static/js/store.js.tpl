@@ -196,6 +196,13 @@ DOMContentLoaded.addEventOrExecute(() => {
         },2000);
     });
 
+    jQueryNuvem(".js-cart-notification-close").on("keydown", function(e){
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            jQueryNuvem(this).trigger("click");
+        }
+    });
+
     {% if not settings.head_fix_desktop %}
 
         {# /* // Add to cart notification on non fixed header */ #}
